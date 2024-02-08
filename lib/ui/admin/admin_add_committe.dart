@@ -1,17 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:faculty_app/blocs/admin/admin_committee_bloc.dart';
 import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/admin/add_committe_response.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
-import 'package:faculty_app/ui/screens/login_signUp_Screen/login_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class AddCommitteScreen extends StatefulWidget {
@@ -28,10 +33,22 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
   TextFieldControl _email = TextFieldControl();
   TextFieldControl _phoneNumber = TextFieldControl();
   TextFieldControl _alterphoneNumber = TextFieldControl();
+  TextFieldControl _detailed = TextFieldControl();
 
 
   FormatAndValidate formatAndValidate = FormatAndValidate();
+  File? _selectedImage;
 
+  Future _pickImage() async {
+    try {
+      final image = await ImagePicker().getImage(source: ImageSource.gallery);
+      if (image == null) return;
+      _selectedImage = File(image.path);
+      setState(() {});
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
 
   @override
   void initState() {
@@ -98,11 +115,68 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
                     textFieldControl: _alterphoneNumber,
                     hintText: 'Enter phone number',
                     keyboardType: TextInputType.phone ),
+                SizedBox(height: 4,),
+                Text(
+                  "Photo",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 4,),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 150,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    child: _selectedImage != null
+                        ? Image.file(_selectedImage!, fit: BoxFit.fill)
+                        : Icon(Icons.camera_alt, size: 40, color: Colors.grey),
+                  ),
+                ),
+                SizedBox(height: 4,),
+                Text(
+                  "Description",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    child: TextField(
+                      scrollPhysics: BouncingScrollPhysics(),
+                      controller: _detailed.controller,
+                      focusNode: _detailed.focusNode,
+                      minLines: 1,
+                      maxLines: 100,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.black12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: primaryColor)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: primaryColor)),
+                        hintText: "Description",
+                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      ),
+                    )),
                 SizedBox(height: 10,),
                 Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
-                    height: 50,
+                    height: 45,
                     child: ElevatedButton(
                       onPressed: () {
                          _validate();
@@ -126,18 +200,20 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
     var email=_email.controller.text;
     var phone=_phoneNumber.controller.text;
     var alterphone=_alterphoneNumber.controller.text;
-
+    var image =_selectedImage;
     if (formatAndValidate.validateName(name) != null) {
       return toastMessage(formatAndValidate.validateName(name));
     }   else if (formatAndValidate.validateEmailID(email) != null) {
       return toastMessage(formatAndValidate.validateEmailID(email));
     }else if (formatAndValidate.validatePhoneNo(phone) != null) {
       return toastMessage(formatAndValidate.validatePhoneNo(phone));
-    }else if (formatAndValidate.validatePhoneNo(alterphone) != null) {
+    }
+    if (alterphone.isNotEmpty && formatAndValidate.validatePhoneNo(alterphone) != null) {
       return toastMessage(formatAndValidate.validatePhoneNo(alterphone));
     }
+
     return
-      await _addCommitte(name,email,phone,alterphone);
+      await _addCommitte(name,email,phone,alterphone,image);
   }
 
   Future _addCommitte(
@@ -145,28 +221,35 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
       String email,
       String phone,
       String alterphone,
+      File? image
       ) async {
-    AppDialogs.loading();
-    Map<String, dynamic> body = {};
-    body["name"] = name;
-    body["email"] = email;
-    body["phone"] = phone;
-    body["phone2"] = alterphone;
-    try {
-      CommitteeAddResponse response =
-      await _bloc!.addCommittee(json.encode(body));
-      Get.back();
-      if (response.success!) {
-        toastMessage("${response.message}");
-        Get.to(AdminHomeScreen());
-      } else {
-        toastMessage('${response.message!}');
-      }
-    } catch (e, s) {
-      Completer().completeError(e, s);
-      Get.back();
-      toastMessage('Something went wrong. Please try again');
+    var formData = FormData();
+    if (image != null) {
+      String fileName = image?.path?.split('/')?.last ?? "";
+      MultipartFile imageFile = await MultipartFile.fromFile(image.path, filename: fileName);
+      formData.files.add(MapEntry(
+        "image",
+        imageFile,
+      ));
     }
+    formData.fields..add(MapEntry("name",name));
+    formData.fields..add(MapEntry("email",email));
+    formData.fields..add(MapEntry("phone", phone));
+    if(alterphone.isNotEmpty) formData.fields..add(MapEntry("phone2", alterphone));
+
+    _bloc!.addCommittee(formData).then((value) {
+      Get.back();
+      CommitteeAddResponse response = value;
+      if (response.success!) {
+    toastMessage("${response.message}");
+    Get.to(AdminHomeScreen());
+      } else {
+    toastMessage("${response.message}");
+      }
+    }).catchError((err) {
+      Get.back();
+      toastMessage('${err}');
+    });
   }
 
 }

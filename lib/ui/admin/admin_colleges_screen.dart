@@ -49,7 +49,6 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
     if (_itemsScrollController.offset >=
         _itemsScrollController.position.maxScrollExtent &&
         !_itemsScrollController.position.outOfRange) {
-      print("reach the bottom");
       paginate();
       //}
     }
@@ -69,7 +68,12 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
           .toList();
     });
   }
-
+  @override
+  void dispose() {
+    _itemsScrollController.dispose();
+    _bloc.dispose();
+    super.dispose();
+  }
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -97,6 +101,8 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
           return _bloc.getCollegeList(false);
         },
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               Padding(
@@ -137,7 +143,7 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                               ? SizedBox(
                             height: MediaQuery.of(context).size.height - 180,
                             child: CommonApiResultsEmptyWidget(
-                                "${resp.message ?? ""}"),
+                                ""),
                           )
                               : _buildCollegeList(filteredCollegesList.isNotEmpty
                               ? filteredCollegesList

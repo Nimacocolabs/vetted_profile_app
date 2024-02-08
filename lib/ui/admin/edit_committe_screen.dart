@@ -106,7 +106,6 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        print("bhjb");
                         _validate();
                       },
                       style: ElevatedButton.styleFrom(primary: primaryColor),
@@ -134,8 +133,6 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
       return toastMessage(formatAndValidate.validateEmailID(email));
     }else if (formatAndValidate.validatePhoneNo(phone) != null) {
       return toastMessage(formatAndValidate.validatePhoneNo(phone));
-    }else if (formatAndValidate.validatePhoneNo(alterphone) != null) {
-      return toastMessage(formatAndValidate.validatePhoneNo(alterphone));
     }
     return
       await _editCommittee(name,email,phone,alterphone);
@@ -152,7 +149,10 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
     body["name"] = name;
     body["email"] = email;
     body["phone"] = phone;
+  if (alterphone.isNotEmpty){
     body["phone2"] = alterphone;
+  }
+
     try {
       CommonResponse response =
       await _bloc!.editCommittee(json.encode(body),widget.details.id.toString());

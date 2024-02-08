@@ -1,11 +1,15 @@
+
 import 'dart:async';
 import 'dart:io';
+import 'package:dio/src/form_data.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
+import 'package:faculty_app/models/college/update_complaint_response.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/network/api_error_message.dart';
 import 'package:faculty_app/network/apis_response.dart';
 import 'package:faculty_app/repositories/college/college_repository.dart';
+import 'package:faculty_app/utils/api_helper.dart';
 
 
 class CollegeComplaintBloc {
@@ -46,14 +50,12 @@ class CollegeComplaintBloc {
     }
 
     try {
-      ComplaintsListResponse response = await _repository!.getCollegeComplaintList(perPage ?? 10, pageNumber);
+      ComplaintsListResponse response = await _repository!.getCollegeComplaintList(perPage ?? 10, pageNumber,"false");
 
       if (response.pages != null && response.pages!.lastPage != null) {
         // Extract the page number from the last_page URL
-        int lastPage = int.tryParse(Uri.parse(response.pages!.lastPage!).queryParameters['page'] ?? '') ?? 0;
-
-        // Check if hasNextPage
-        hasNextPage = lastPage >= pageNumber;
+        hasNextPage =
+        response.pages!.lastPage! >= pageNumber.toInt() ? true : false;
 
         if (isPagination) {
           if (complaintList.length == 0) {
@@ -66,12 +68,6 @@ class CollegeComplaintBloc {
         }
 
         complaintDetailsListSink!.add(ApiResponse.completed(response));
-        if (isPagination) {
-          listener!.refresh(false);
-        }
-      } else {
-        // Handle the case when pages or lastPage is null
-        complaintDetailsListSink!.add(ApiResponse.error("Invalid response format"));
         if (isPagination) {
           listener!.refresh(false);
         }
@@ -99,10 +95,11 @@ class CollegeComplaintBloc {
       String intensity,
       String adharNo,
       String details,
+      String pancardnumber,
       File image) async {
     print("image-->${image}");
     try {
-      CommonResponse response = await _repository!.addComplaint(name,email,phone,address,department,subject,complaint,intensity,adharNo,details,image);
+      CommonResponse response = await _repository!.addComplaint(name,email,phone,address,department,subject,complaint,intensity,adharNo,details,pancardnumber,image);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);
@@ -110,4 +107,27 @@ class CollegeComplaintBloc {
     }
   }
 
+  Future<CommonResponse?> deleteComplaint(String complaintId) async {
+    try {
+      CommonResponse response = await _repository!
+          .deleteComplaint(complaintId);
+      toastMessage(response.message);
+      return response;
+    } catch (e, s) {
+      Completer().completeError(e, s);
+    }
+    return null;
+  }
+
+  Future<ComplaintUpdateResponse> editComplaint(
+      String id,
+      FormData formdata) async {
+    try {
+      ComplaintUpdateResponse response = await _repository!.editComplaint(id,formdata);
+      return response;
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      throw e;
+    }
+  }
 }

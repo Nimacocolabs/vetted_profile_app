@@ -4,6 +4,7 @@ import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
 import 'package:faculty_app/network/apis_response.dart';
 import 'package:faculty_app/ui/admin/view_complaint_screen.dart';
+import 'package:faculty_app/ui/college/college_edit_complaint_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
 import 'package:faculty_app/widgets/common_api_loader.dart';
@@ -97,6 +98,8 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
         },
 
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               SizedBox(height: 10,),
@@ -245,7 +248,7 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // Add your onPressed logic here
+                         Get.to(EditComplaintScreen(details: complaintsList[index],));
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
@@ -255,7 +258,12 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                       ),
                       SizedBox(width: 20),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await _bloc.deleteComplaint(
+                              complaintsList[index].id.toString());
+                          await Future.delayed(Duration(seconds: 2));
+                          _bloc.getComplaintsList(false);
+                        },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
                         ),

@@ -48,14 +48,8 @@ class AdminCollegeBloc {
 
     try {
       CollegeListResponse response = await _repository!.getcollegeList(perPage ?? 10, pageNumber);
-
-      if (response.pages != null && response.pages!.lastPage != null) {
-        // Extract the page number from the last_page URL
-        int lastPage = int.tryParse(Uri.parse(response.pages!.lastPage!).queryParameters['page'] ?? '') ?? 0;
-
-        // Check if hasNextPage
-        hasNextPage = lastPage >= pageNumber;
-
+      hasNextPage =
+      response.pages!.lastPage! >= pageNumber.toInt() ? true : false;
         if (isPagination) {
           if (collegeList.length == 0) {
             collegeList = response.colleges!;
@@ -70,13 +64,6 @@ class AdminCollegeBloc {
         if (isPagination) {
           listener!.refresh(false);
         }
-      } else {
-        // Handle the case when pages or lastPage is null
-        collegeDetailsListSink!.add(ApiResponse.error("Invalid response format"));
-        if (isPagination) {
-          listener!.refresh(false);
-        }
-      }
     } catch (error, s) {
       Completer().completeError(error, s);
       if (isPagination) {
@@ -113,6 +100,9 @@ class AdminCollegeBloc {
     return null;
   }
 
-
+  dispose() {
+    collegeDetailsListSink?.close();
+    _collegeListController?.close();
+  }
 
 }

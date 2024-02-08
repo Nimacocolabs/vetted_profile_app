@@ -35,56 +35,47 @@ class AdminComplaintBloc {
   List<Profiles> complaintList = [];
 
   getComplaintsList(bool isPagination, {int? perPage}) async {
+
+    print("pagination${isPagination}");
     if (isPagination) {
       pageNumber = pageNumber + 1;
       listener!.refresh(true);
+
     } else {
       complaintDetailsListSink!.add(ApiResponse.loading('Fetching Data'));
       pageNumber = 1;
+
+
     }
-
     try {
-      ComplaintsListResponse response = await _repository!.getcomplaintList(perPage ?? 10, pageNumber);
-
-      if (response.pages != null && response.pages!.lastPage != null) {
-        // Extract the page number from the last_page URL
-        int lastPage = int.tryParse(Uri.parse(response.pages!.lastPage!).queryParameters['page'] ?? '') ?? 0;
-
-        // Check if hasNextPage
-        hasNextPage = lastPage >= pageNumber;
-
-        if (isPagination) {
-          if (complaintList.length == 0) {
-            complaintList = response.profiles!;
-          } else {
-            complaintList.addAll(response.profiles!);
-          }
+      ComplaintsListResponse response =
+      await _repository!.getcomplaintList(10, pageNumber);
+      hasNextPage =
+      response.pages!.lastPage! >= pageNumber ? true : false;
+      if (isPagination) {
+        if (complaintList.length == 0) {
+          complaintList = response.profiles!;
         } else {
-          complaintList = response.profiles ?? [];
-        }
-
-        complaintDetailsListSink!.add(ApiResponse.completed(response));
-        if (isPagination) {
-          listener!.refresh(false);
+          complaintList.addAll(response.profiles!);
         }
       } else {
-        // Handle the case when pages or lastPage is null
-        complaintDetailsListSink!.add(ApiResponse.error("Invalid response format"));
-        if (isPagination) {
-          listener!.refresh(false);
-        }
+        complaintList = response.profiles! ?? [];
+      }
+      complaintDetailsListSink!.add(ApiResponse.completed(response));
+      if (isPagination) {
+        listener!.refresh(false);
       }
     } catch (error, s) {
       Completer().completeError(error, s);
       if (isPagination) {
         listener!.refresh(false);
       } else {
-        complaintDetailsListSink!.add(ApiResponse.error(ApiErrorMessage.getNetworkError(error)));
+        complaintDetailsListSink!
+            .add(ApiResponse.error(ApiErrorMessage.getNetworkError(error)));
       }
-    } finally {
-      // Cleanup or additional logic if needed
-    }
+    } finally {}
   }
+
 
 
   Future<CommonResponse?> deleteComplaint(String complaintId) async {

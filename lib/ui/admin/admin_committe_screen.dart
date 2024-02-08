@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:faculty_app/blocs/admin/admin_committee_bloc.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/committee_list_response.dart';
@@ -97,6 +98,8 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
           return _bloc.getCommitteeList(false);
         },
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               SizedBox(height: 10,),
@@ -138,7 +141,7 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
                               ? SizedBox(
                             height: MediaQuery.of(context).size.height - 180,
                             child: CommonApiResultsEmptyWidget(
-                                "${resp.message ?? ""}"),
+                                ""),
                           )
                                : _buildCommitteList(filteredCommitteeList.isNotEmpty
                     ? filteredCommitteeList
@@ -178,10 +181,35 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
             child: ListTile(
               tileColor: Colors.grey[200],
               contentPadding: EdgeInsets.all(10),
-              onTap: () {
-
-              },
-              leading: Icon(Icons.group, color: primaryColor),
+              leading: Container(
+              height: 60,
+              width: 60,
+              padding: EdgeInsets.all(1),
+              decoration: BoxDecoration(
+                color: Colors.black87,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl:
+                  '${committeeList[index].imageUrl}',
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/images/dp.png'),
+                      // height: 60,
+                      // width: 60,
+                    ),
+                  ),
+                ),
+              ),
+            ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -231,10 +259,7 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
                       SizedBox(width: 10,),
                       ElevatedButton(
                         onPressed: () async {
-                          await _bloc.deleteCommittee(
-                              committeeList[index].id.toString());
-                          await Future.delayed(Duration(seconds: 2));
-                          _bloc.getCommitteeList(false);
+                          _showDeleteConfirmationDialog(context,committeeList[index].id.toString());
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
@@ -249,6 +274,35 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
           );
         },
       ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context,String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Confirmation'),
+          content: Text('Are you sure you want to delete?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async{
+                await _bloc.deleteCommittee(id);
+                await Future.delayed(Duration(seconds: 2));
+                _bloc.getCommitteeList(false);
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete',style: TextStyle(color: Colors.red),),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel',style: TextStyle(color: primaryColor),),
+            ),
+          ],
+        );
+      },
     );
   }
 }

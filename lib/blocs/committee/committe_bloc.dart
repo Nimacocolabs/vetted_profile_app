@@ -1,17 +1,19 @@
+
+
 import 'dart:async';
+
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
 import 'package:faculty_app/network/api_error_message.dart';
 import 'package:faculty_app/network/apis_response.dart';
-import 'package:faculty_app/repositories/college/college_repository.dart';
+import 'package:faculty_app/repositories/committee/committte_repository.dart';
 
+class CommitteBloc {
+  CommitteRepository? _repository;
 
-class CollegeOtherComplaintBloc {
-  CollegeRepository? _repository;
-
-  CollegeOtherComplaintBloc({this.listener}) {
+  CommitteBloc({this.listener}) {
     if (_repository == null)
-      _repository = CollegeRepository();
+      _repository = CommitteRepository();
     _complaintsListController =
     StreamController<ApiResponse<ComplaintsListResponse>>.broadcast();
   }
@@ -34,7 +36,7 @@ class CollegeOtherComplaintBloc {
 
   List<Profiles> complaintList = [];
 
-  getComplaintsList(bool isPagination, {int? perPage}) async {
+  getClaimedComplaintsList(bool isPagination, {int? perPage}) async {
     if (isPagination) {
       pageNumber = pageNumber + 1;
       listener!.refresh(true);
@@ -44,9 +46,11 @@ class CollegeOtherComplaintBloc {
     }
 
     try {
-      ComplaintsListResponse response = await _repository!.getCollegeOtherComplaintList(perPage ?? 10, pageNumber,"true");
+      ComplaintsListResponse response = await _repository!.getCalimedComplaintList(perPage ?? 10, pageNumber);
+
         hasNextPage =
         response.pages!.lastPage! >= pageNumber.toInt() ? true : false;
+
         if (isPagination) {
           if (complaintList.length == 0) {
             complaintList = response.profiles!;

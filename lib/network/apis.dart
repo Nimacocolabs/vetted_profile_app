@@ -2,6 +2,7 @@ class Apis {
   static String registerUser = 'api/register-college';
   static String loginUser = 'api/login';
   static String logOutUser='api/logout';
+  static String forgotPassword="api/forgot-password";
 
   //Admin
   static String addCommittee="api/admin/committee/store";
@@ -13,8 +14,19 @@ class Apis {
   static String deleteCollege="api/admin/colleges/";
   static String deleteCommittee="api/admin/committee/";
   static String editCommittee="api/admin/committee/";
+  static String schedule="api/admin/hearings/";
 
   //college
   static String addComplaint="api/colleges/profiles/store";
   static String fetchCollegeComplaints="api/colleges/profiles/table";
+  static String deleteComplaintCollege="api/colleges/profiles/";
+  static String editComplaint="api/colleges/profiles/";
+
+  //committee
+  static String fetchClaimedList="api/committees/profiles/table";
+
+  //profile
+  static String fetchProfileData="api/users/edit";
+  static String editProfile="api/users/update";
+  static String resetPassword="api/users/change-password";
 }

@@ -87,65 +87,22 @@ class Colleges {
 
 class Pages {
   int? total;
-  String? currentPage;
-  String? nextPage;
-  String? prevPage;
-  String? firstPage;
-  String? lastPage;
-  Pages? pages;
+  int? page;
+  int? lastPage;
 
-  Pages(
-      {this.total,
-        this.currentPage,
-        this.nextPage,
-        this.prevPage,
-        this.firstPage,
-        this.lastPage,
-        this.pages});
+  Pages({this.total, this.page, this.lastPage});
 
   Pages.fromJson(Map<String, dynamic> json) {
     total = json['total'];
-    currentPage = json['current_page'];
-    nextPage = json['next_page'];
-    prevPage = json['prev_page'];
-    firstPage = json['first_page'];
+    page = json['page'];
     lastPage = json['last_page'];
-    pages = json['pages'] != null ? new Pages.fromJson(json['pages']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['total'] = this.total;
-    data['current_page'] = this.currentPage;
-    data['next_page'] = this.nextPage;
-    data['prev_page'] = this.prevPage;
-    data['first_page'] = this.firstPage;
+    data['page'] = this.page;
     data['last_page'] = this.lastPage;
-    if (this.pages != null) {
-      data['pages'] = this.pages!.toJson();
-    }
-    return data;
-  }
-}
-
-class Pages1 {
-  String? s1;
-  String? s2;
-  String? s3;
-
-  Pages1({this.s1, this.s2, this.s3});
-
-  Pages1.fromJson(Map<String, dynamic> json) {
-    s1 = json['1'];
-    s2 = json['2'];
-    s3 = json['3'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['1'] = this.s1;
-    data['2'] = this.s2;
-    data['3'] = this.s3;
     return data;
   }
 }
