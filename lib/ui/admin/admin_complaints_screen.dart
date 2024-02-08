@@ -3,6 +3,7 @@ import 'package:faculty_app/blocs/admin/admin_complaints_bloc.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
 import 'package:faculty_app/network/apis_response.dart';
+import 'package:faculty_app/ui/admin/complaint_schedule_screen.dart';
 import 'package:faculty_app/ui/admin/view_complaint_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
@@ -31,8 +32,6 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
     _itemsScrollController.addListener(_scrollListener);
     super.initState();
   }
-
-  @override
   refresh(bool isLoading) {
     if (mounted) {
       setState(() {
@@ -97,6 +96,8 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
           return _bloc.getComplaintsList(false);
         },
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               SizedBox(height: 10,),
@@ -138,7 +139,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                               ? SizedBox(
                             height: MediaQuery.of(context).size.height - 180,
                             child: CommonApiResultsEmptyWidget(
-                                "${resp.message ?? ""}"),
+                                ""),
                           )
                               : _buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
@@ -174,6 +175,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
         physics: NeverScrollableScrollPhysics(),
         itemCount: complaintsList.length, // Replace with the actual number of complaints
         itemBuilder: (context, index) {
+          print("Length-->${complaintsList.length}");
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(
@@ -254,7 +256,16 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
+                    children: [ElevatedButton(
+                      onPressed: ()  {
+                         Get.to(ComplaintScheduleScreen(id:complaintsList[index].id.toString()));
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: primaryColor,
+                      ),
+                      child: Text("Schedule"),
+                    ),
+                      SizedBox(width: 10,),
                       ElevatedButton(
                         onPressed: () async {
                           await _bloc.deleteComplaint(

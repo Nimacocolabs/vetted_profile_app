@@ -5,7 +5,8 @@ import 'package:faculty_app/models/signup_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
-import 'package:faculty_app/ui/screens/login_signUp_Screen/signup_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/forgot_password_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/signup_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/shared_prefs.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
@@ -71,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: MediaQuery
                       .of(context)
                       .size
-                      .height* 0.56,
+                      .height* 0.58,
                     width: MediaQuery
                         .of(context)
                         .size
@@ -145,19 +146,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             textInputAction: TextInputAction.done,
                           ),
                         ),
-                        SizedBox(height: 5),
-                        // Align(
-                        //   alignment: AlignmentDirectional.bottomEnd,
-                        //   child: TextButton(
-                        //     onPressed: () {},
-                        //     child: Text(
-                        //       'Forgot Password ?',
-                        //       style: TextStyle(
-                        //           color: primaryColor, fontSize: 15),
-                        //     ),
-                        //   ),
-                        // ),
-                        SizedBox(height: 15),
+                        Align(
+                          alignment: AlignmentDirectional.bottomEnd,
+                          child: TextButton(
+                            onPressed: () {
+                              Get.to(ForgotPasswordScreen());
+                            },
+                            child: Text(
+                              'Forgot Password ?',
+                              style: TextStyle(
+                                  color: primaryColor, fontSize: 15),
+                            ),
+                          ),
+                        ),
                         Center(
                           child: SizedBox(
                             height: MediaQuery
@@ -177,9 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: Text("LOGIN")),
                           ),
-                        ),
-                        SizedBox(
-                          height: 25,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 20, left: 50),
@@ -276,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
         toastMessage(error.email);
       } else {
         Get.back();
-        toastMessage('Something went wrong. Please try again');
+        toastMessage('Please enter valid email and password');
       }
     }
   }

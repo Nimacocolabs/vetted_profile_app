@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/common_response.dart';
-import 'package:faculty_app/ui/screens/login_signUp_Screen/login_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';

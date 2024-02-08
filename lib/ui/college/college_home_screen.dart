@@ -1,4 +1,5 @@
 import 'package:faculty_app/repositories/auth_repository.dart';
+import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:faculty_app/ui/college/college_add_complaints_screen.dart';
 import 'package:faculty_app/ui/college/college_allcomplaints_screen.dart';
 import 'package:faculty_app/ui/college/college_complaints_screen.dart';
@@ -55,6 +56,21 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(ProfileScreenUser());
+                            },
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                              ),
+                              child: Icon(Icons.person_outline, size: 30, color: primaryColor),
+                            ),
+                          ),
+                          SizedBox(width: 7),
                           GestureDetector(
                             onTap: () {
                               LogOut.getLogoutRepository();

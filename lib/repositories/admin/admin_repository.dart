@@ -15,7 +15,7 @@ class AdminRepository {
     if (apiClient == null) apiClient = new ApiProvider();
   }
 
-  Future<CommitteeAddResponse> addCommittee(String body) async {
+  Future<CommitteeAddResponse> addCommittee(FormData body) async {
     Response response = await apiClient!
         .getJsonInstance()
         .post(Apis.addCommittee, data: body);
@@ -46,7 +46,7 @@ class AdminRepository {
   Future<ComplaintsListResponse> getcomplaintList(
       int perPage, int page) async {
     final response = await apiClient!.getJsonInstance().get(
-        '${Apis.fetchComplaintsList}?per_page=$perPage&page=$page');
+        '${Apis.fetchComplaintsList}?per_page=$perPage&page=${page.toInt()}');
     return ComplaintsListResponse.fromJson(response.data);
   }
 
@@ -82,6 +82,14 @@ class AdminRepository {
     final response = await apiClient!
         .getJsonInstance()
         .delete('${Apis.deleteComplaint}$complaintId/delete');
+    return CommonResponse.fromJson(response.data);
+  }
+
+  Future<CommonResponse> schedule(String id,FormData body) async {
+    print("=>${body}");
+    Response response = await apiClient!
+        .getJsonInstance()
+        .post('${Apis.schedule}$id/store', data: body);
     return CommonResponse.fromJson(response.data);
   }
 

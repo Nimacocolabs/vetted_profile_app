@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dio/src/form_data.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/add_committe_response.dart';
 import 'package:faculty_app/models/admin/committee_list_response.dart';
@@ -49,12 +50,8 @@ class AdminCommitteBloc {
     try {
       CommitteeListResponse response = await _repository!.getAllCommitteList(perPage ?? 10, pageNumber);
 
-      if (response.pages != null && response.pages!.lastPage != null) {
-        // Extract the page number from the last_page URL
-        int lastPage = int.tryParse(Uri.parse(response.pages!.lastPage!).queryParameters['page'] ?? '') ?? 0;
-
-        // Check if hasNextPage
-        hasNextPage = lastPage >= pageNumber;
+      hasNextPage =
+      response.pages!.lastPage! >= pageNumber.toInt() ? true : false;
 
         if (isPagination) {
           if (committeeList.length == 0) {
@@ -70,13 +67,6 @@ class AdminCommitteBloc {
         if (isPagination) {
           listener!.refresh(false);
         }
-      } else {
-        // Handle the case when pages or lastPage is null
-        committeeDetailsListSink!.add(ApiResponse.error("Invalid response format"));
-        if (isPagination) {
-          listener!.refresh(false);
-        }
-      }
     } catch (error, s) {
       Completer().completeError(error, s);
       if (isPagination) {
@@ -91,9 +81,9 @@ class AdminCommitteBloc {
 
 
 
-  Future<CommitteeAddResponse> addCommittee(String body) async {
+  Future<CommitteeAddResponse> addCommittee(FormData formdata) async {
     try {
-      CommitteeAddResponse response = await _repository!.addCommittee(body);
+      CommitteeAddResponse response = await _repository!.addCommittee(formdata);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);
@@ -122,6 +112,13 @@ class AdminCommitteBloc {
       throw e;
     }
   }
-
-
+  Future<CommonResponse> schedule(String id,FormData formdata) async {
+    try {
+      CommonResponse response = await _repository!.schedule(id,formdata);
+      return response;
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      throw e;
+    }
+  }
 }

@@ -183,7 +183,13 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
           SizedBox(width: 10,),
           Text(":",style: TextStyle(fontWeight: FontWeight.bold)),
           SizedBox(width: 10,),
-          Text(value ?? 'N/A',style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15))
+          Flexible( // Wrap the Text widget with Flexible
+            child: Text(
+              value ?? 'N/A',
+              style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
+              overflow: TextOverflow.visible, // Allow overflow
+            ),
+          ),
         ],
 
       ),

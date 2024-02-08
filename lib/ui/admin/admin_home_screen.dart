@@ -3,6 +3,7 @@ import 'package:faculty_app/ui/admin/admin_add_committe.dart';
 import 'package:faculty_app/ui/admin/admin_colleges_screen.dart';
 import 'package:faculty_app/ui/admin/admin_committe_screen.dart';
 import 'package:faculty_app/ui/admin/admin_complaints_screen.dart';
+import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/user.dart';
@@ -56,6 +57,21 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(ProfileScreenUser());
+                            },
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                              ),
+                              child: Icon(Icons.person_outline, size: 30, color: primaryColor),
+                            ),
+                          ),
+                          SizedBox(width: 7),
                           GestureDetector(
                             onTap: () {
                               LogOut.getLogoutRepository();

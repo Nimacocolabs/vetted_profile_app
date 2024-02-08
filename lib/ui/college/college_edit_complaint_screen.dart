@@ -1,31 +1,35 @@
-import 'dart:async';
-import 'dart:convert';
+
 import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:faculty_app/blocs/college/college_complaint_bloc.dart';
-import 'package:faculty_app/models/common_response.dart';
+import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
+import 'package:faculty_app/models/college/update_complaint_response.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
-import 'package:faculty_app/widgets/app_dialogs.dart';
+
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 
 
-class AddComplaintScreen extends StatefulWidget {
-  const AddComplaintScreen({Key? key}) : super(key: key);
+class EditComplaintScreen extends StatefulWidget {
+  final Profiles details;
+  const EditComplaintScreen({Key? key,required this.details}) : super(key: key);
 
   @override
-  State<AddComplaintScreen> createState() => _AddComplaintScreenState();
+  State<EditComplaintScreen> createState() => _EditComplaintScreenState();
 }
 
-class _AddComplaintScreenState extends State<AddComplaintScreen> {
+class _EditComplaintScreenState extends State<EditComplaintScreen> {
   final CollegeComplaintBloc _bloc = CollegeComplaintBloc();
-  //
-  // CollegeComplaintBloc? _bloc;
 
   TextFieldControl _name = TextFieldControl();
   TextFieldControl _email = TextFieldControl();
@@ -59,10 +63,28 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
 
   @override
   void initState() {
-    // _bloc = CollegeComplaintBloc();
+    _name.controller.text = widget.details.name!;
+    _email.controller.text = widget.details.email!;
+    _phone.controller.text = widget.details.phone!;
+    _address.controller.text = widget.details.address!;
+    if (widget.details.pan != null) {
+      _pancardnumber.controller.text = widget.details.pan!;
+    }
+
+    if (widget.details.aadhar != null) {
+      _adharcardnumber.controller.text = widget.details.aadhar!;
+    }
+    _jobTitle.controller.text=widget.details.subject!;
+    _department.controller.text=widget.details.department!;
+    _department.controller.text=widget.details.department!;
+    _nature.controller.text=widget.details.complaint!;
+    if (widget.details.remarks != null && widget.details.remarks!.isNotEmpty) {
+      _detailed.controller.text = widget.details.remarks!;
+    }
+    intensity = widget.details.level ?? '';
+
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +102,7 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(color: Colors.white),
-        title: const Text("Add Complaint",style: TextStyle(color: Colors.white),),
+        title: const Text("Edit Complaint",style: TextStyle(color: Colors.white),),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -222,17 +244,41 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
                 ),
                 SizedBox(height: 4,),
                 GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: _selectedImage != null
-                        ? Image.file(_selectedImage!, fit: BoxFit.fill)
-                        : Icon(Icons.camera_alt, size: 40, color: Colors.grey),
+                  onTap: (){
+                    _pickImage();
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: _selectedImage != null
+                            ? Image.file(
+                          _selectedImage!,
+                          fit: BoxFit.fill,
+                        )
+                            : (widget.details.image != null &&
+                            widget.details.image!.isNotEmpty)
+                            ? CachedNetworkImage(
+                          imageUrl: widget.details.image!,
+                          fit: BoxFit.fill,
+                        )
+                            : SizedBox.shrink(),
+                      ),
+                      if (widget.details.image != null)
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Icon(Icons.camera_alt, size: 40, color: primaryColor),
+                      ),
+                      if (_selectedImage == null && widget.details.image == null)
+                        Icon(Icons.camera_alt, size: 40, color: Colors.red),
+                    ],
                   ),
                 ),
                 SizedBox(height: 6,),
@@ -290,7 +336,7 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
                         _validate();
                       },
                       style: ElevatedButton.styleFrom(primary: primaryColor),
-                      child: Text("Submit"),
+                      child: Text("Update"),
                     ),
                   ),
                 ),
@@ -332,16 +378,15 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       return toastMessage("Please enter nature of complaint");
     } else if (formatAndValidate.validateAadhaar(adharNo) != null) {
       return toastMessage(formatAndValidate.validateAadhaar(adharNo));
-    } else if (image == null) {
-      return toastMessage("Please select image");
     }
-
     var pancardnumber = _pancardnumber.controller.text;
     if (pancardnumber.isNotEmpty && formatAndValidate.validatePANCard(pancardnumber) != null) {
       return toastMessage(formatAndValidate.validatePANCard(pancardnumber));
     }
 
-    await _addComplaint(
+
+
+    await _updateComplaint(
       name,
       email,
       phone,
@@ -356,7 +401,7 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       image!,
     );
   }
-  Future _addComplaint(
+  Future _updateComplaint(
       String name,
       String email,
       String phone,
@@ -370,21 +415,44 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       String pancardnumber,
       File image,
       ) async {
-    await _bloc.addComplaint(
-      name,
-      email,
-      phone,
-      address,
-      department,
-      subject,
-      complaint,
-      intensity,
-      adharNo,
-      details,
-      pancardnumber,
-      image,
-    );
-  }
+    var formData = FormData();
+    if (image != null) {
+      String fileName = image?.path
+          ?.split('/')
+          ?.last ?? "";
+      MultipartFile imageFile = await MultipartFile.fromFile(
+          image.path, filename: fileName);
+      formData.files.add(MapEntry(
+        "image",
+        imageFile,
+      ));
+    }
+    formData.fields..add(MapEntry("name", name));
+    formData.fields..add(MapEntry("email", email));
+    formData.fields..add(MapEntry("phone", phone));
+    formData.fields..add(MapEntry("address", address));
+    formData.fields..add(MapEntry("department", department));
+    formData.fields..add(MapEntry("subject", subject));
+    formData.fields..add(MapEntry("complaint",complaint));
+    formData.fields..add(MapEntry("level", intensity));
+    formData.fields..add(MapEntry("aadhar", adharNo));
+    if (details.isNotEmpty) formData.fields..add(MapEntry("remarks", details));
+    if (pancardnumber.isNotEmpty) formData.fields
+      ..add(MapEntry("pan", pancardnumber));
 
+    _bloc!.editComplaint(widget.details.id.toString(), formData).then((value) {
+      Get.back();
+      ComplaintUpdateResponse response = value;
+      if (response.success!) {
+        toastMessage("${response.message}");
+        Get.to(() => CollegeHomeScreen());
+      } else {
+        toastMessage("${response.message}");
+      }
+    }).catchError((err) {
+      Get.back();
+      toastMessage('${err}');
+    });
+  }
 
 }

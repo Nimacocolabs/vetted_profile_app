@@ -1,6 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:faculty_app/blocs/committee/committe_bloc.dart';
+import 'package:faculty_app/interface/load_more_listener.dart';
+import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
+import 'package:faculty_app/network/apis_response.dart';
+import 'package:faculty_app/ui/admin/view_complaint_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
+import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
+import 'package:faculty_app/widgets/common_api_loader.dart';
+import 'package:faculty_app/widgets/common_api_result_empty_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CommitteComplaintsScreen extends StatefulWidget {
   const CommitteComplaintsScreen({Key? key}) : super(key: key);
@@ -9,7 +18,58 @@ class CommitteComplaintsScreen extends StatefulWidget {
   State<CommitteComplaintsScreen> createState() => _CommitteComplaintsScreenState();
 }
 
-class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
+class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> with LoadMoreListener{
+  late CommitteBloc _bloc;
+  late ScrollController _itemsScrollController;
+  bool isLoadingMore = false;
+  List<Profiles> filteredComplaintsList = [];
+  @override
+  void initState() {
+    _bloc = CommitteBloc(listener: this);
+    _bloc!.getClaimedComplaintsList(false);
+    _itemsScrollController = ScrollController();
+    _itemsScrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
+  @override
+  refresh(bool isLoading) {
+    if (mounted) {
+      setState(() {
+        isLoadingMore = isLoading;
+      });
+    }
+  }
+
+  paginate() async {
+    print('paginate');
+    await _bloc.getClaimedComplaintsList(true);
+  }
+
+  void _scrollListener() async {
+    if (_itemsScrollController.offset >=
+        _itemsScrollController.position.maxScrollExtent &&
+        !_itemsScrollController.position.outOfRange) {
+      print("reach the bottom");
+      paginate();
+      //}
+    }
+    if (_itemsScrollController.offset <=
+        _itemsScrollController.position.minScrollExtent &&
+        !_itemsScrollController.position.outOfRange) {
+      print("reach the top");
+    }
+  }
+  void filterComplaintList(String query) {
+    setState(() {
+      filteredComplaintsList = _bloc.complaintList
+          .where((complaint) =>
+      complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.phone!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
   TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -29,27 +89,78 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
         leading: BackButton(color: Colors.white),
         title: const Text("Complaints", style: TextStyle(color: Colors.white)),
       ),
-      body: SafeArea(
+      body: RefreshIndicator(
+        color: Colors.white,
+        backgroundColor: primaryColor,
+        onRefresh: () {
+          return _bloc.getClaimedComplaintsList(false);
+        },
+
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               SizedBox(height: 10,),
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.all(12.0),
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    prefixIcon: Icon(Icons.search),
+                    prefixIcon: Icon(Icons.search,color: primaryColor,),
+                    contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: primaryColor), // Set active border color
+                    ),
+                  ),
+                  style: TextStyle( // Set style for entered text
+                    color: primaryColor, // Change the text color
+                    fontSize: 16.0, // Adjust the font size
                   ),
                   onChanged: (value) {
+                    filterComplaintList(value);
                   },
                 ),
               ),
-              _buildComplaintList(),
+              StreamBuilder<ApiResponse<dynamic>>(
+                  stream: _bloc.complaintDetailsListStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      switch (snapshot.data!.status!) {
+                        case Status.LOADING:
+                          return CommonApiLoader();
+                        case Status.COMPLETED:
+                          ComplaintsListResponse resp = snapshot.data!.data;
+                          return _bloc.complaintList.isEmpty
+                              ? SizedBox(
+                            height: MediaQuery.of(context).size.height - 180,
+                            child: CommonApiResultsEmptyWidget(
+                                ""),
+                          )
+                              : _buildComplaintList(filteredComplaintsList.isNotEmpty
+                              ? filteredComplaintsList
+                              : _bloc.complaintList);
+                        case Status.ERROR:
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height - 180,
+                            child: CommonApiResultsEmptyWidget(
+                                "",
+                                textColorReceived: Colors.black),
+                          );
+                      }
+                    }
+                    return SizedBox(
+                        height: MediaQuery.of(context).size.height - 180, child: CommonApiLoader());
+                  }),
+              if (isLoadingMore) LinearLoader(),
+              SizedBox(
+                height: 30,
+              ),
             ],
           ),
         ),
@@ -57,13 +168,13 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
     );
   }
 
-  Widget _buildComplaintList() {
+  Widget _buildComplaintList(List<Profiles> complaintsList) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: 5, // Replace with the actual number of complaints
+        itemCount: complaintsList.length, // Replace with the actual number of complaints
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -71,7 +182,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
               tileColor: Colors.grey[200],
               contentPadding: EdgeInsets.all(10),
               onTap: () {
-
+                Get.to(ViewComplaintScreen(details:complaintsList[index]));
               },
               leading: Container(
                 height: 60,
@@ -86,7 +197,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
                   child: CachedNetworkImage(
                     fit: BoxFit.cover,
                     imageUrl:
-                    'https://example.com/path/to/your/image.jpg',
+                    '${complaintsList[index].image}',
                     placeholder: (context, url) => Center(
                       child: CircularProgressIndicator(),
                     ),
@@ -106,7 +217,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Complaint name",
+                    "${complaintsList[index].complaint}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
@@ -117,7 +228,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width - 150,
                     child: Text(
-                      "Email \nPhone number",
+                      "${complaintsList[index].email} \n${complaintsList[index].phone}",
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.grey[600],
@@ -140,7 +251,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> {
                         ),
                       ),
                       Text(
-                        "Claimed",
+                        "${complaintsList[index].status}",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,

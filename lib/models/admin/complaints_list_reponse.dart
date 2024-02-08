@@ -16,7 +16,7 @@ class ComplaintsListResponse {
         profiles!.add(new Profiles.fromJson(v));
       });
     }
-    pages = json['pages'] != null ? new Pages.fromJson(json['pages']) : null;
+    pages = json['pages'] != null ?  Pages.fromJson(json['pages']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -93,7 +93,7 @@ class Profiles {
     name = json['name'];
     email = json['email'];
     phone = json['phone'];
-    aadhar = json['aadhar']; // Cast to String? explicitly
+    aadhar = json['aadhar'];
     pan = json['pan'];
     subject = json['subject'];
     department = json['department'];
@@ -144,58 +144,22 @@ class Profiles {
 
 class Pages {
   int? total;
-  String? currentPage;
-  String? nextPage;
-  String? prevPage;
-  String? firstPage;
-  String? lastPage;
-  Pages? pages;
+  int? page;
+  int? lastPage;
 
-  Pages(
-      {this.total,
-        this.currentPage,
-        this.nextPage,
-        this.prevPage,
-        this.firstPage,
-        this.lastPage,
-        this.pages});
+  Pages({this.total, this.page, this.lastPage});
 
   Pages.fromJson(Map<String, dynamic> json) {
     total = json['total'];
-    currentPage = json['current_page'];
-    nextPage = json['next_page'];
-    prevPage = json['prev_page'];
-    firstPage = json['first_page'];
+    page = json['page'];
     lastPage = json['last_page'];
-    pages = json['pages'] != null ? new Pages.fromJson(json['pages']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['total'] = this.total;
-    data['current_page'] = this.currentPage;
-    data['next_page'] = this.nextPage;
-    data['prev_page'] = this.prevPage;
-    data['first_page'] = this.firstPage;
+    data['page'] = this.page;
     data['last_page'] = this.lastPage;
-    if (this.pages != null) {
-      data['pages'] = this.pages!.toJson();
-    }
-    return data;
-  }
-}
-
-class Pages1 {
-  String? s1;
-  Pages1({this.s1});
-
-  Pages1.fromJson(Map<String, dynamic> json) {
-    s1 = json['1'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['1'] = this.s1;
     return data;
   }
 }

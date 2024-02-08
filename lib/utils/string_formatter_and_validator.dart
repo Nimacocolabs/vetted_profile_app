@@ -108,7 +108,7 @@ class FormatAndValidate {
         value.length > 10 ||
         value.length < 8 ||
         _dobRegExp.hasMatch(value)
-        ? "Enter Date in format YYYY/MM/DD"
+        ? "Enter Date in format YYYY-MM-DD"
         : null;
   }
   validateYear(value) {
@@ -179,4 +179,31 @@ class FormatAndValidate {
         ? "Enter a valid mobile number between 10 and 15 digits"
         : null;
   }
+
+
+
+
+  validateTime(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please choose a time';
+    }
+    return null;
+  }
+
+ validateMeetLink(value) {
+    if (value == null || value.isEmpty) {
+      return 'Please provide a Google Meet link';
+    }
+    // Regular expression to validate Google Meet link format
+    RegExp regExp = RegExp(
+      r'^(https?:\/\/)?meet.google.com\/[a-z0-9-]+',
+      caseSensitive: false,
+    );
+    if (!regExp.hasMatch(value)) {
+      return 'Please provide a valid Google Meet link';
+    }
+    return null;
+  }
+
+
 }

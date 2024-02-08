@@ -89,13 +89,16 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
         leading: BackButton(color: Colors.white),
         title: const Text("Complaints", style: TextStyle(color: Colors.white)),
       ),
-      body: RefreshIndicator(color: Colors.white,
+      body: RefreshIndicator(
+        color: Colors.white,
         backgroundColor: primaryColor,
         onRefresh: () {
           return _bloc.getComplaintsList(false);
         },
 
         child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          controller: _itemsScrollController,
           child: Column(
             children: [
               SizedBox(height: 10,),
@@ -137,7 +140,7 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
                               ? SizedBox(
                             height: MediaQuery.of(context).size.height - 180,
                             child: CommonApiResultsEmptyWidget(
-                                "${resp.message ?? ""}"),
+                                ""),
                           )
                               : _buildAllComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList

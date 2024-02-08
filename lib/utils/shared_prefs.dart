@@ -1,5 +1,5 @@
 import 'package:faculty_app/models/signup_response.dart';
-import 'package:faculty_app/ui/screens/login_signUp_Screen/login_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
 import 'package:faculty_app/utils/user.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
-import 'package:faculty_app/ui/screens/login_signUp_Screen/login_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/shared_prefs.dart';
 import 'package:faculty_app/utils/user.dart';

@@ -1,4 +1,6 @@
 import 'package:faculty_app/repositories/auth_repository.dart';
+import 'package:faculty_app/ui/committe/committee_invites_screen.dart';
+import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:faculty_app/ui/committe/committe_complaints_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:faculty_app/utils/api_helper.dart';
@@ -52,6 +54,21 @@ class _CommitteHomeScreenState extends State<CommitteHomeScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(ProfileScreenUser());
+                            },
+                            child: Container(
+                              height: 45,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.white,
+                              ),
+                              child: Icon(Icons.person_outline, size: 30, color: primaryColor),
+                            ),
+                          ),
+                          SizedBox(width: 7),
                           GestureDetector(
                             onTap: () {
                               LogOut.getLogoutRepository();
@@ -163,6 +180,51 @@ class _CommitteHomeScreenState extends State<CommitteHomeScreen> {
                                   SizedBox(height: 5),
                                   Text(
                                     "Complaints",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20,),
+                        GestureDetector(
+                          onTap: (){
+                            Get.to(CommitteeInvitesScreen());
+                          },
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [secondaryColor, primaryColor],
+                                ),
+                                borderRadius: BorderRadius.circular(10), // Set your desired color
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.insert_invitation,
+                                      size: 40,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Invites",
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                     textAlign: TextAlign.center,
                                   ),
