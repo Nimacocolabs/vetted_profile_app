@@ -1,15 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:faculty_app/blocs/admin/admin_committee_bloc.dart';
 import 'package:faculty_app/models/admin/committee_list_response.dart';
 import 'package:faculty_app/models/common_response.dart';
-import 'package:faculty_app/ui/admin/admin_committe_screen.dart';
+import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
-import 'package:faculty_app/widgets/app_dialogs.dart';
+import 'package:faculty_app/utils/user.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get_core/get_core.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 
 class EditCommitteScreen extends StatefulWidget {
@@ -22,27 +29,70 @@ class EditCommitteScreen extends StatefulWidget {
 
 class _EditCommitteScreenState extends State<EditCommitteScreen> {
   AdminCommitteBloc? _bloc;
-
+  String description="";
   TextFieldControl _name = TextFieldControl();
   TextFieldControl _email = TextFieldControl();
   TextFieldControl _phoneNumber = TextFieldControl();
   TextFieldControl _alterphoneNumber = TextFieldControl();
-
+  TextFieldControl _detailed = TextFieldControl();
 
   FormatAndValidate formatAndValidate = FormatAndValidate();
 
   @override
   void initState() {
     _bloc = AdminCommitteBloc();
+    _fetchDetails();
     _name.controller.text = widget.details.name!;
     _email.controller.text = widget.details.email!;
     _phoneNumber.controller.text = widget.details.phone!;
     _alterphoneNumber.controller.text = widget.details.phone2!;
+    // _detailed.controller.text=description;
     super.initState();
+  }
+
+  Future<void> _fetchDetails() async {
+    await Future.delayed(Duration(seconds: 1));
+    try {
+      final response = await http.get(
+        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/admin/committee/${widget.details.id}/edit'),
+        headers: {
+          'Authorization': 'Bearer ${UserDetails.apiToken}',
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final details = jsonResponse['data'];
+        setState(() {
+          description = details['description'];
+          _detailed.controller.text = description;
+          // Set loading to false once data is fetched
+        });
+      } else {
+        print('Failed to fetch dashboard details: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching dashboard details: $error');
+    }
+  }
+
+
+  File? _selectedImage;
+
+  Future _pickImage() async {
+    try {
+      final image = await ImagePicker().getImage(source: ImageSource.gallery);
+      if (image == null) return;
+      _selectedImage = File(image.path);
+      setState(() {});
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    print("description : ${description}");
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -99,11 +149,91 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
                     textFieldControl: _alterphoneNumber,
                     hintText: 'Enter phone number',
                     keyboardType: TextInputType.phone ),
+                Text(
+                  "Photo",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 4,),
+                GestureDetector(
+                  onTap: (){
+                    _pickImage();
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: _selectedImage != null
+                            ? Image.file(
+                          _selectedImage!,
+                          fit: BoxFit.fill,
+                        )
+                            : (widget.details.imageUrl != null &&
+                            widget.details.imageUrl!.isNotEmpty && widget.details.image != null)
+                            ? CachedNetworkImage(
+                          imageUrl: widget.details.imageUrl!,
+                          fit: BoxFit.fill,
+                        )
+                            : SizedBox.shrink(),
+                      ),
+                      if (widget.details.imageUrl != null && widget.details.image != null)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Icon(Icons.camera_alt, size: 40, color: primaryColor),
+                        ),
+                      if (_selectedImage == null && widget.details.image == null)
+                        Icon(Icons.camera_alt, size: 40, color: Colors.red),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 5,),
+                Text(
+                  "Description",
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    child: TextField(
+                      scrollPhysics: BouncingScrollPhysics(),
+                      controller: _detailed.controller,
+                      focusNode: _detailed.focusNode,
+                      minLines: 1,
+                      maxLines: 100,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.black12)),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: primaryColor)),
+                        focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            borderSide: BorderSide(color: primaryColor)),
+                        hintText: "Description",
+                        hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
+                        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      ),
+                    )),
                 SizedBox(height: 10,),
                 Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
-                    height: 50,
+                    height: 45,
                     child: ElevatedButton(
                       onPressed: () {
                         _validate();
@@ -126,6 +256,7 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
     var email=_email.controller.text;
     var phone=_phoneNumber.controller.text;
     var alterphone=_alterphoneNumber.controller.text;
+    var decription= _detailed.controller.text;
 
     if (formatAndValidate.validateName(name) != null) {
       return toastMessage(formatAndValidate.validateName(name));
@@ -134,8 +265,15 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
     }else if (formatAndValidate.validatePhoneNo(phone) != null) {
       return toastMessage(formatAndValidate.validatePhoneNo(phone));
     }
+
+    if (alterphone.isNotEmpty && formatAndValidate.validatePhoneNo(alterphone) != null) {
+      return toastMessage(formatAndValidate.validatePhoneNo(alterphone));
+    }
+    if (decription.isNotEmpty && formatAndValidate.validateAddress(decription) != null) {
+      return toastMessage("Please provide description");
+    }
     return
-      await _editCommittee(name,email,phone,alterphone);
+      await _editCommittee(name,email,phone,alterphone,decription);
   }
 
   Future _editCommittee(
@@ -143,31 +281,44 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
       String email,
       String phone,
       String alterphone,
+      String decription,
       ) async {
-    AppDialogs.loading();
-    Map<String, dynamic> body = {};
-    body["name"] = name;
-    body["email"] = email;
-    body["phone"] = phone;
-  if (alterphone.isNotEmpty){
-    body["phone2"] = alterphone;
-  }
 
-    try {
-      CommonResponse response =
-      await _bloc!.editCommittee(json.encode(body),widget.details.id.toString());
+    var formData = FormData();
+    if (_selectedImage != null) {
+      String fileName = _selectedImage?.path
+          ?.split('/')
+          ?.last ?? "";
+      MultipartFile imageFile = await MultipartFile.fromFile(
+          _selectedImage!.path, filename: fileName);
+      formData.files.add(MapEntry(
+        "image",
+        imageFile,
+      ));
+    }
+    formData.fields..add(MapEntry("name", name));
+    formData.fields..add(MapEntry("email", email));
+    formData.fields..add(MapEntry("phone", phone));
+    if (alterphone.isNotEmpty)formData.fields..add(MapEntry("phone2", alterphone));
+    if (decription.isNotEmpty) formData.fields..add(MapEntry("description", decription));
+
+
+    _bloc!.editCommittee(widget.details.id.toString(), formData).then((value) {
       Get.back();
+      CommonResponse response = value;
       if (response.success!) {
         toastMessage("${response.message}");
-        Get.to(AdminCommiteeScreen());
+        Get.to(() => AdminHomeScreen());
       } else {
-        toastMessage('${response.message!}');
+        toastMessage("${response.message}");
       }
-    } catch (e, s) {
-      Completer().completeError(e, s);
+    }).catchError((err) {
       Get.back();
-      toastMessage('Something went wrong. Please try again');
-    }
+      toastMessage('${err}');
+    });
   }
 
-}
+
+  }
+
+

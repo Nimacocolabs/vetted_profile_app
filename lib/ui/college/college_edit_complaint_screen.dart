@@ -358,7 +358,6 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
     var complaint = _nature.controller.text;
     var adharNo = _adharcardnumber.controller.text;
     var details = _detailed.controller.text;
-    var image = _selectedImage;
 
     if (formatAndValidate.validateName(name) != null) {
       return toastMessage(formatAndValidate.validateName(name));
@@ -376,7 +375,8 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
       return toastMessage("Please enter department");
     } else if (formatAndValidate.validateAddress(complaint) != null) {
       return toastMessage("Please enter nature of complaint");
-    } else if (formatAndValidate.validateAadhaar(adharNo) != null) {
+    }
+    if (adharNo.isNotEmpty && formatAndValidate.validateAadhaar(adharNo) != null) {
       return toastMessage(formatAndValidate.validateAadhaar(adharNo));
     }
     var pancardnumber = _pancardnumber.controller.text;
@@ -398,7 +398,6 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
       adharNo,
       details,
       pancardnumber,
-      image!,
     );
   }
   Future _updateComplaint(
@@ -413,15 +412,14 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
       String adharNo,
       String details,
       String pancardnumber,
-      File image,
       ) async {
     var formData = FormData();
-    if (image != null) {
-      String fileName = image?.path
+    if (_selectedImage != null) {
+      String fileName = _selectedImage?.path
           ?.split('/')
           ?.last ?? "";
       MultipartFile imageFile = await MultipartFile.fromFile(
-          image.path, filename: fileName);
+          _selectedImage!.path, filename: fileName);
       formData.files.add(MapEntry(
         "image",
         imageFile,
@@ -435,6 +433,7 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
     formData.fields..add(MapEntry("subject", subject));
     formData.fields..add(MapEntry("complaint",complaint));
     formData.fields..add(MapEntry("level", intensity));
+    if (adharNo.isNotEmpty)
     formData.fields..add(MapEntry("aadhar", adharNo));
     if (details.isNotEmpty) formData.fields..add(MapEntry("remarks", details));
     if (pancardnumber.isNotEmpty) formData.fields

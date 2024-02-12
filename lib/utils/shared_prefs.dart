@@ -13,9 +13,6 @@ class SharedPrefs {
   static String spName = 'spName';
   static String spMobile = 'spMobile';
   static String spRole = 'spRole';
-  static String spProfileClaimed = 'spProfileClaimed';
-  static String spProfileRegistered = "spProfileRegistered";
-  static String spProfileResolved = "spProfileResolved";
 
 
   static init() async {
@@ -28,9 +25,6 @@ class SharedPrefs {
       getString(spEmail),
       getString(spMobile),
       getString(spRole),
-      getString(spProfileClaimed),
-      getString(spProfileRegistered),
-      getString(spProfileResolved),
     );
   }
 
@@ -47,7 +41,6 @@ class SharedPrefs {
 
     String token = response.token ?? UserDetails.apiToken;
     User user = response.user!;
-    Details details = response.details!;
 
     await setString(spToken, '$token');
     await setString(spUserId, '${user.id ?? ''}');
@@ -55,10 +48,6 @@ class SharedPrefs {
     await setString(spName, '${user.name ?? ''}');
     await setString(spMobile, '${user.phone ?? ''}');
     await setString(spRole, '${user.role ?? ''}');
-    await setString(spProfileClaimed, '${details.profiles!.claimed ?? ''}');
-    await setString(spProfileRegistered, '${details.profiles!.registered ?? ''}');
-    await setString(spProfileResolved, '${details.profiles!.resolved ?? ''}');
-
     UserDetails.set(
       token,
       '${user.id ?? ''}',
@@ -66,16 +55,13 @@ class SharedPrefs {
       '${user.email ?? ''}',
       '${user.phone ?? ''}',
       '${user.role ?? ''}',
-      '${details.profiles!.claimed ?? ''}',
-      '${details.profiles!.registered ?? ''}',
-      '${details.profiles!.resolved ?? ''}',
     );
     return true;
   }
 
   static Future<bool> logOut() async {
     await _preferences.clear();
-    UserDetails.set('', '', '', '', '', '', '', '', '',);
+    UserDetails.set('', '', '', '', '', '',);
     Get.offAll(() => LoginScreen());
     return true;
   }

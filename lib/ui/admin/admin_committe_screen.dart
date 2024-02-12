@@ -137,13 +137,11 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           CommitteeListResponse resp = snapshot.data!.data;
-                          return _bloc.committeeList.isEmpty
-                              ? SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                ""),
-                          )
-                               : _buildCommitteList(filteredCommitteeList.isNotEmpty
+                          return  filteredCommitteeList.isEmpty &&
+                              searchController.text.isNotEmpty
+                              ? CommonApiResultsEmptyWidget("No records found")
+
+                    : _buildCommitteList(filteredCommitteeList.isNotEmpty
                     ? filteredCommitteeList
                         : _bloc.committeeList);
                         case Status.ERROR:

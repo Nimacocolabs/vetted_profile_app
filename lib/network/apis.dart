@@ -14,7 +14,11 @@ class Apis {
   static String deleteCollege="api/admin/colleges/";
   static String deleteCommittee="api/admin/committee/";
   static String editCommittee="api/admin/committee/";
-  static String schedule="api/admin/hearings/";
+  static String schedule="api/admin/profiles/hearings/";
+  static String fetchSheduledList="api/profiles/hearings/table";
+  static String fetchSheduledData="api/profiles/";
+  static String delectSchedule="api/admin/profiles/hearings/";
+
 
   //college
   static String addComplaint="api/colleges/profiles/store";
@@ -24,6 +28,7 @@ class Apis {
 
   //committee
   static String fetchClaimedList="api/committees/profiles/table";
+  static String addComments="api/committees/profiles/verdicts/";
 
   //profile
   static String fetchProfileData="api/users/edit";

@@ -1,33 +1,35 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:faculty_app/blocs/admin/admin_complaints_bloc.dart';
+import 'package:faculty_app/blocs/admin/admin_scheduled_bloc.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
+import 'package:faculty_app/models/admin/scheduled_list_response.dart';
 import 'package:faculty_app/network/apis_response.dart';
-import 'package:faculty_app/ui/admin/complaint_schedule_screen.dart';
-import 'package:faculty_app/ui/admin/view_complaint_screen.dart';
+import 'package:faculty_app/ui/admin/view_shedules_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
+import 'package:faculty_app/utils/user.dart';
 import 'package:faculty_app/widgets/common_api_loader.dart';
 import 'package:faculty_app/widgets/common_api_result_empty_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AdminComplaintsScreen extends StatefulWidget {
-  const AdminComplaintsScreen({Key? key}) : super(key: key);
+class AdminScheduleScreen extends StatefulWidget {
+  const AdminScheduleScreen({Key? key}) : super(key: key);
 
   @override
-  State<AdminComplaintsScreen> createState() => _AdminComplaintsScreenState();
+  State<AdminScheduleScreen> createState() => _AdminScheduleScreenState();
 }
 
-class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with LoadMoreListener {
-  late AdminComplaintBloc _bloc;
+class _AdminScheduleScreenState extends State<AdminScheduleScreen> with LoadMoreListener {
+  late AdminScheduleBloc _bloc;
   late ScrollController _itemsScrollController;
   bool isLoadingMore = false;
-  List<Profiles> filteredComplaintsList = [];
+  List<Hearings> filteredComplaintsList = [];
   @override
   void initState() {
-    _bloc = AdminComplaintBloc(listener: this);
-    _bloc!.getComplaintsList(false);
+    _bloc = AdminScheduleBloc(listener: this);
+    _bloc!.getSheduledsList(false);
     _itemsScrollController = ScrollController();
     _itemsScrollController.addListener(_scrollListener);
     super.initState();
@@ -42,7 +44,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
 
   paginate() async {
     print('paginate');
-    await _bloc.getComplaintsList(true);
+    await _bloc.getSheduledsList(true);
   }
 
   void _scrollListener() async {
@@ -63,10 +65,10 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
     setState(() {
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
-      complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
-          complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
+      complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
-          complaint.phone!.toLowerCase().contains(query.toLowerCase()))
+          complaint.phone!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.complaint!.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -88,13 +90,13 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(color: Colors.white),
-        title: const Text("Complaints", style: TextStyle(color: Colors.white)),
+        title: const Text("Schedules", style: TextStyle(color: Colors.white)),
       ),
       body: RefreshIndicator(
         color: Colors.white,
         backgroundColor: primaryColor,
         onRefresh: () {
-          return _bloc.getComplaintsList(false);
+          return _bloc.getSheduledsList(false);
         },
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
@@ -135,11 +137,11 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                         case Status.LOADING:
                           return CommonApiLoader();
                         case Status.COMPLETED:
-                          ComplaintsListResponse resp = snapshot.data!.data;
+                          ScheduledListResponse resp = snapshot.data!.data;
                           return filteredComplaintsList.isEmpty &&
                               searchController.text.isNotEmpty
                               ? CommonApiResultsEmptyWidget("No records found")
-                              :  _buildComplaintList(filteredComplaintsList.isNotEmpty
+                              : _buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
                               : _bloc.complaintList);
                         case Status.ERROR:
@@ -165,7 +167,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
     );
   }
 
-  Widget _buildComplaintList(List<Profiles> complaintsList) {
+  Widget _buildComplaintList(List<Hearings> complaintsList) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: ListView.builder(
@@ -173,44 +175,43 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
         physics: NeverScrollableScrollPhysics(),
         itemCount: complaintsList.length, // Replace with the actual number of complaints
         itemBuilder: (context, index) {
-          print("Length-->${complaintsList.length}");
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(
               tileColor: Colors.grey[200],
               contentPadding: EdgeInsets.all(10),
               onTap: () {
-                Get.to(ViewComplaintScreen(details:complaintsList[index]));
+                Get.to(ViewScheduleScreen(details:complaintsList[index]));
               },
               leading: Container(
-              height: 60,
-              width: 60,
-              padding: EdgeInsets.all(1),
-              decoration: BoxDecoration(
-                color: Colors.black87,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  imageUrl:
-                  '${complaintsList[index].image}',
-                  placeholder: (context, url) => Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                  errorWidget: (context, url, error) => ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/images/dp.png'),
-                      // height: 60,
-                      // width: 60,
+                height: 60,
+                width: 60,
+                padding: EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl:
+                    '${complaintsList[index].image}',
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorWidget: (context, url, error) => ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image(
+                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/dp.png'),
+                        // height: 60,
+                        // width: 60,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -223,7 +224,6 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                   //     color: Colors.black,
                   //   ),
                   // ),
-                  SizedBox(height: 4,),
                   Text(
                     "${complaintsList[index].name}",
                     style: TextStyle(
@@ -261,19 +261,11 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                       color: primaryColor,
                     ),
                   ),
-                  Row(
+                  UserDetails.userRole == "admin"
+                      ? Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      complaintsList[index].status == "claimed"?ElevatedButton(
-                      onPressed: ()  {
-                         Get.to(ComplaintScheduleScreen(id:complaintsList[index].id.toString()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: primaryColor,
-                      ),
-                      child: Text("Schedule"),
-                    ):SizedBox(),
-                      SizedBox(width: 10,),
+                      SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: () async {
                           _showDeleteConfirmationDialog(context,complaintsList[index].id.toString());
@@ -284,7 +276,26 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
                         child: Text("Delete"),
                       ),
                     ],
-                  ),
+                  )
+                      : SizedBox(),
+                  // UserDetails.userRole == "committee"
+                  //     ? Row(
+                  //   mainAxisAlignment: MainAxisAlignment.end,
+                  //   children: [
+                  //     SizedBox(width: 10),
+                  //     ElevatedButton(
+                  //       onPressed: ()  {
+                  //         Get.to(ViewScheduleScreen(details:complaintsList[index]));
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         primary: primaryColor,
+                  //       ),
+                  //       child: Text("view"),
+                  //     ),
+                  //   ],
+                  // )
+                  //     : SizedBox(),
+
                 ],
               ),
             ),
@@ -293,6 +304,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
       ),
     );
   }
+
   void _showDeleteConfirmationDialog(BuildContext context,String id) {
     showDialog(
       context: context,
@@ -303,9 +315,9 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
           actions: <Widget>[
             TextButton(
               onPressed: () async{
-                await _bloc.deleteComplaint(id);
+                await _bloc.deleteSchedule(id);
                 await Future.delayed(Duration(seconds: 2));
-                _bloc.getComplaintsList(false);
+                _bloc.getSheduledsList(false);
                 Navigator.of(context).pop();
               },
               child: Text('Delete',style: TextStyle(color: Colors.red),),

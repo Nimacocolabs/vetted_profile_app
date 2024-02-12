@@ -1,16 +1,16 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:faculty_app/blocs/college/college_complaint_bloc.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
-import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -312,7 +312,6 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
     var complaint = _nature.controller.text;
     var adharNo = _adharcardnumber.controller.text;
     var details = _detailed.controller.text;
-    var image = _selectedImage;
 
     if (formatAndValidate.validateName(name) != null) {
       return toastMessage(formatAndValidate.validateName(name));
@@ -330,15 +329,16 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       return toastMessage("Please enter department");
     } else if (formatAndValidate.validateAddress(complaint) != null) {
       return toastMessage("Please enter nature of complaint");
-    } else if (formatAndValidate.validateAadhaar(adharNo) != null) {
-      return toastMessage(formatAndValidate.validateAadhaar(adharNo));
-    } else if (image == null) {
-      return toastMessage("Please select image");
     }
-
+    if (adharNo.isNotEmpty && formatAndValidate.validateAadhaar(adharNo) != null) {
+      return toastMessage(formatAndValidate.validateAadhaar(adharNo));
+    }
     var pancardnumber = _pancardnumber.controller.text;
     if (pancardnumber.isNotEmpty && formatAndValidate.validatePANCard(pancardnumber) != null) {
       return toastMessage(formatAndValidate.validatePANCard(pancardnumber));
+    }
+    if (details.isNotEmpty && formatAndValidate.validateAddress(details) != null) {
+      return toastMessage("Please enter valid remarks");
     }
 
     await _addComplaint(
@@ -353,7 +353,6 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       adharNo,
       details,
       pancardnumber,
-      image!,
     );
   }
   Future _addComplaint(
@@ -368,23 +367,46 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       String adharNo,
       String details,
       String pancardnumber,
-      File image,
       ) async {
-    await _bloc.addComplaint(
-      name,
-      email,
-      phone,
-      address,
-      department,
-      subject,
-      complaint,
-      intensity,
-      adharNo,
-      details,
-      pancardnumber,
-      image,
-    );
-  }
+    var formData = FormData();
+    if (_selectedImage != null) {
+      String fileName = _selectedImage?.path
+          ?.split('/')
+          ?.last ?? "";
+      MultipartFile imageFile = await MultipartFile.fromFile(
+          _selectedImage!.path, filename: fileName);
+      formData.files.add(MapEntry(
+        "image",
+        imageFile,
+      ));
+    }
+    formData.fields..add(MapEntry("name", name));
+    formData.fields..add(MapEntry("email", email));
+    formData.fields..add(MapEntry("phone", phone));
+    formData.fields..add(MapEntry("address", address));
+    formData.fields..add(MapEntry("department", department));
+    formData.fields..add(MapEntry("subject", subject));
+    formData.fields..add(MapEntry("complaint",complaint));
+    formData.fields..add(MapEntry("level", intensity));
+    if (adharNo.isNotEmpty)
+      formData.fields..add(MapEntry("aadhar", adharNo));
+    if (details.isNotEmpty) formData.fields..add(MapEntry("remarks", details));
+    if (pancardnumber.isNotEmpty) formData.fields
+      ..add(MapEntry("pan", pancardnumber));
 
+    _bloc!.addComplaint(formData).then((value) {
+      Get.back();
+      CommonResponse response = value;
+      if (response.success!) {
+        toastMessage("${response.message}");
+        Get.to(() => CollegeHomeScreen());
+      } else {
+        toastMessage("${response.message}");
+      }
+    }).catchError((err) {
+      Get.back();
+      toastMessage('${err}');
+    });
+  }
 
 }

@@ -65,6 +65,7 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
       complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.phone!.toLowerCase().contains(query.toLowerCase()))
           .toList();
@@ -136,12 +137,9 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ComplaintsListResponse resp = snapshot.data!.data;
-                          return _bloc.complaintList.isEmpty
-                              ? SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                ""),
-                          )
+                          return filteredComplaintsList.isEmpty &&
+                              searchController.text.isNotEmpty
+                              ? CommonApiResultsEmptyWidget("No records found")
                               : _buildAllComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
                               : _bloc.complaintList);
@@ -218,11 +216,11 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
                 children: [
                   SizedBox(height: 7,),
                   Text(
-                    "Complaint : ${complaintsList[index].complaint}",
+                    "${complaintsList[index].name}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: primaryColor,
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 4,),
@@ -241,6 +239,14 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    "Complaint : ${complaintsList[index].complaint}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: primaryColor,
                     ),
                   ),
                 ],

@@ -201,6 +201,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
     var phone=_phoneNumber.controller.text;
     var alterphone=_alterphoneNumber.controller.text;
     var image =_selectedImage;
+    var description=_detailed.controller.text;
     if (formatAndValidate.validateName(name) != null) {
       return toastMessage(formatAndValidate.validateName(name));
     }   else if (formatAndValidate.validateEmailID(email) != null) {
@@ -211,9 +212,12 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
     if (alterphone.isNotEmpty && formatAndValidate.validatePhoneNo(alterphone) != null) {
       return toastMessage(formatAndValidate.validatePhoneNo(alterphone));
     }
+    if (description.isNotEmpty && formatAndValidate.validateAddress(description) != null) {
+      return toastMessage("Please provide description");
+    }
 
     return
-      await _addCommitte(name,email,phone,alterphone,image);
+      await _addCommitte(name,email,phone,alterphone,description,image);
   }
 
   Future _addCommitte(
@@ -221,6 +225,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
       String email,
       String phone,
       String alterphone,
+      String description,
       File? image
       ) async {
     var formData = FormData();
@@ -236,6 +241,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
     formData.fields..add(MapEntry("email",email));
     formData.fields..add(MapEntry("phone", phone));
     if(alterphone.isNotEmpty) formData.fields..add(MapEntry("phone2", alterphone));
+    if(description.isNotEmpty) formData.fields..add(MapEntry("description", description));
 
     _bloc!.addCommittee(formData).then((value) {
       Get.back();

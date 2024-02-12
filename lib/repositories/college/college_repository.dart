@@ -32,55 +32,12 @@ class CollegeRepository {
   }
 
   Future<CommonResponse> addComplaint(
-      String name,
-      String email,
-      String phone,
-      String address,
-      String department,
-      String subject,
-      String complaint,
-      String intensity,
-      String adharNo,
-      String details,
-      String pancardnumber,
-      File? image,
+      FormData formData
       ) async {
-    String fileName = image?.path?.split('/')?.last ?? "";
-    MultipartFile? imageFile;
-    if (image != null) {
-      imageFile = await MultipartFile.fromFile(image.path, filename: fileName);
-    }
-
-    FormData formData = FormData.fromMap({
-      "name": name,
-      "email": email,
-      "phone": phone,
-      "address": address,
-      "department": department,
-      "subject": subject,
-      "complaint": complaint,
-      "level": intensity,
-      "aadhar": adharNo,
-      "image": imageFile,
-      if (details.isNotEmpty) "remarks": details,
-      if (pancardnumber.isNotEmpty) "pan": pancardnumber,
-    });
-
-    Response response = await apiClient!
+    final  Response response = await apiClient!
         .getJsonInstance()
         .post(Apis.addComplaint, data: formData);
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      print(response.data!);
-      toastMessage("${response.data['message']}");
-      Get.to(() => CollegeHomeScreen());
-      return CommonResponse.fromJson(response.data);
-    } else {
-      toastMessage("${response.data['message']}");
-      print(
-          "###########__________________ADD COMPLAINT UNSUCCESSFULLY________________##############");
-      throw "";
-    }
+    return CommonResponse.fromJson(response.data);
   }
 
   Future<CommonResponse> deleteComplaint(

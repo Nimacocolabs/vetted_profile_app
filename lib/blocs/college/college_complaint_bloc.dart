@@ -85,21 +85,9 @@ class CollegeComplaintBloc {
   }
 
 
-  Future<CommonResponse> addComplaint( String name,
-      String email,
-      String phone,
-      String address,
-      String department,
-      String subject,
-      String complaint,
-      String intensity,
-      String adharNo,
-      String details,
-      String pancardnumber,
-      File image) async {
-    print("image-->${image}");
+  Future<CommonResponse> addComplaint(FormData formdata) async {
     try {
-      CommonResponse response = await _repository!.addComplaint(name,email,phone,address,department,subject,complaint,intensity,adharNo,details,pancardnumber,image);
+      CommonResponse response = await _repository!.addComplaint(formdata);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);

@@ -245,8 +245,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       LoginSignupResponse response = await _authBloc.login(json.encode(body));
       Get.back();
-      print("response.status-->${response.status}");
-      print("response.success-->${response.success}");
       print("Role--->${response.user!.role}");
       if (response.success!) {
         await SharedPrefs.logIn(response);

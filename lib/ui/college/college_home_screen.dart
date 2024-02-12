@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:faculty_app/repositories/auth_repository.dart';
+import 'package:faculty_app/ui/admin/admin_schedules_screen.dart';
 import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:faculty_app/ui/college/college_add_complaints_screen.dart';
 import 'package:faculty_app/ui/college/college_allcomplaints_screen.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/user.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class CollegeHomeScreen extends StatefulWidget {
   const CollegeHomeScreen({Key? key}) : super(key: key);
@@ -19,6 +23,41 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
   @override
 
   AuthRepository LogOut = AuthRepository();
+
+  int? _profilesClaimed;
+  int? _profilesRegistered;
+  int? _profilesResolved;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDashboardDetails();
+  }
+
+  Future<void> _fetchDashboardDetails() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/dashboard-details'),
+        headers: {
+          'Authorization': 'Bearer ${UserDetails.apiToken}',
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        final details = jsonResponse['details'];
+        setState(() {
+          _profilesClaimed = details['profiles']['claimed'];
+          _profilesRegistered = details['profiles']['registered'];
+          _profilesResolved = details['profiles']['resolved'];
+        });
+      } else {
+        print('Failed to fetch dashboard details: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching dashboard details: $error');
+    }
+  }
   String _getGreeting() {
     var now = DateTime.now();
     var hour = now.hour;
@@ -122,29 +161,89 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 10),
-                        Row(
-                          children: [
-                            // Expanded(
-                            //   child: Container(
-                            //     child: AdminInfoCard(
-                            //       title: "Colleges",
-                            //       pending: UserDetails.userCollegePend,
-                            //       approved: UserDetails.userCollegeAprov,
-                            //     ),
-                            //   ),
-                            // ),
-                            Expanded(
-                              child: Container(
-                                child: AdminInfoCard(
-                                  title: "Profiles",
-                                  claimed: UserDetails.userProfileClaim,
-                                  registered: UserDetails.userProfileRegister,
-                                  resolved: UserDetails.userProfileResolve,
+                        Container(
+                          width: double.infinity,
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [primaryColor, secondaryColor], // Specify your gradient colors here
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Profiles",
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    if (_profilesClaimed != null && _profilesRegistered != null && _profilesResolved != null)
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Claimed : $_profilesClaimed",style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),
+                                          ),
+                                          Text(
+                                            "Registered : $_profilesRegistered",style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),
+                                          ),
+                                          Text(
+                                            "Resolved : $_profilesResolved",style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
+                          ),
                         ),
+                        // Row(
+                        //   children: [
+                        //     // Expanded(
+                        //     //   child: Container(
+                        //     //     child: AdminInfoCard(
+                        //     //       title: "Colleges",
+                        //     //       pending: UserDetails.userCollegePend,
+                        //     //       approved: UserDetails.userCollegeAprov,
+                        //     //     ),
+                        //     //   ),
+                        //     // ),
+                        //     // Expanded(
+                        //     //   child: Container(
+                        //     //     child: AdminInfoCard(
+                        //     //       title: "Profiles",
+                        //     //       claimed: UserDetails.userProfileClaim,
+                        //     //       registered: UserDetails.userProfileRegister,
+                        //     //       resolved: UserDetails.userProfileResolve,
+                        //     //     ),
+                        //     //   ),
+                        //     // ),
+                        //   ],
+                        // ),
                         Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -177,6 +276,13 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                                 icon: Icons.add_card_outlined,
                                 onPressed: () {
                                   Get.to(AddComplaintScreen());
+                                },
+                              ),
+                              _buildFunctionalityCard(
+                                title: 'Schedules',
+                                icon: Icons.schedule,
+                                onPressed: () {
+                                  Get.to(AdminScheduleScreen());
                                 },
                               ),
                             ],

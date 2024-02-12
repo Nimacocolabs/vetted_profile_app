@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:faculty_app/blocs/admin/admin_college_bloc.dart';
 import 'package:faculty_app/models/admin/colloge_list_response.dart';
 import 'package:faculty_app/network/apis_response.dart';
@@ -5,8 +6,6 @@ import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
 import 'package:faculty_app/widgets/common_api_loader.dart';
 import 'package:faculty_app/widgets/common_api_result_empty_widget.dart';
-import 'package:flutter/material.dart';
-
 import '../../interface/load_more_listener.dart';
 
 class AdminCollegeScreen extends StatefulWidget {
@@ -16,12 +15,13 @@ class AdminCollegeScreen extends StatefulWidget {
   State<AdminCollegeScreen> createState() => _AdminCollegeScreenState();
 }
 
-class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreListener  {
-
+class _AdminCollegeScreenState extends State<AdminCollegeScreen>
+    with LoadMoreListener {
   late AdminCollegeBloc _bloc;
   late ScrollController _itemsScrollController;
   bool isLoadingMore = false;
   List<Colleges> filteredCollegesList = [];
+
   @override
   void initState() {
     _bloc = AdminCollegeBloc(listener: this);
@@ -58,23 +58,37 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
       print("reach the top");
     }
   }
+
   void filterCollegeList(String query) {
     setState(() {
       filteredCollegesList = _bloc.collegeList
           .where((college) =>
-      college.userName!.toLowerCase().contains(query.toLowerCase()) ||
-          college.collegeName!.toLowerCase().contains(query.toLowerCase()) ||
-          college.collegeEmail!.toLowerCase().contains(query.toLowerCase()))
+      college.userName!
+          .toLowerCase()
+          .contains(query.toLowerCase()) ||
+          college.collegeName!
+              .toLowerCase()
+              .contains(query.toLowerCase()) ||
+          college.collegeEmail!
+              .toLowerCase()
+              .contains(query.toLowerCase()) ||
+          college.collegePhone!
+              .toLowerCase()
+              .contains(query.toLowerCase()) ||
+          college.address!.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
+
   @override
   void dispose() {
     _itemsScrollController.dispose();
     _bloc.dispose();
     super.dispose();
   }
+
   TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,19 +125,20 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    prefixIcon: Icon(Icons.search,color: primaryColor,),
-                    contentPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 4),
+                    prefixIcon: Icon(Icons.search, color: primaryColor),
+                    contentPadding:
+                    EdgeInsets.symmetric(vertical: 3, horizontal: 4),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: primaryColor), // Set active border color
+                      borderSide: BorderSide(color: primaryColor),
                     ),
                   ),
-                  style: TextStyle( // Set style for entered text
-                    color: primaryColor, // Change the text color
-                    fontSize: 16.0, // Adjust the font size
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 16.0,
                   ),
                   onChanged: (value) {
                     filterCollegeList(value);
@@ -139,26 +154,20 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           CollegeListResponse resp = snapshot.data!.data;
-                          return _bloc.collegeList.isEmpty
-                              ? SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                ""),
-                          )
-                              : _buildCollegeList(filteredCollegesList.isNotEmpty
-                              ? filteredCollegesList
-                              : _bloc.collegeList);
+                          return filteredCollegesList.isEmpty &&
+                              searchController.text.isNotEmpty
+                              ? CommonApiResultsEmptyWidget("No records found")
+                              : _buildCollegeList(
+                              filteredCollegesList.isNotEmpty
+                                  ? filteredCollegesList
+                                  : _bloc.collegeList);
                         case Status.ERROR:
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                "${snapshot.data!.message!}",
-                                textColorReceived: Colors.black),
-                          );
+                          return CommonApiResultsEmptyWidget(
+                              "${snapshot.data!.message!}",
+                              textColorReceived: Colors.black);
                       }
                     }
-                    return SizedBox(
-                        height: MediaQuery.of(context).size.height - 180, child: CommonApiLoader());
+                    return CommonApiLoader();
                   }),
               if (isLoadingMore) LinearLoader(),
               SizedBox(
@@ -218,29 +227,29 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                         ),
                       ),
                       Spacer(),
-                      if(collegeList[index].status =="approved")
-                      Text(
-                        "${collegeList[index].status!.toUpperCase()}",
-                        style: TextStyle(
-                          color: Colors.green, // Choose your color
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      if(collegeList[index].status =="rejected")
+                      if (collegeList[index].status == "approved")
                         Text(
                           "${collegeList[index].status!.toUpperCase()}",
                           style: TextStyle(
-                            color: Colors.red, // Choose your color
+                            color: Colors.green,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
                         ),
-                      if(collegeList[index].status =="pending")
+                      if (collegeList[index].status == "rejected")
                         Text(
                           "${collegeList[index].status!.toUpperCase()}",
                           style: TextStyle(
-                            color: Colors.blue, // Choose your color
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      if (collegeList[index].status == "pending")
+                        Text(
+                          "${collegeList[index].status!.toUpperCase()}",
+                          style: TextStyle(
+                            color: Colors.blue,
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
                           ),
@@ -266,8 +275,7 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                       ElevatedButton(
                         onPressed: () async {
                           await _bloc.acceptOrRejectCollege(
-                              'approved',
-                              collegeList[index].id.toString());
+                              'approved', collegeList[index].id.toString());
                           await Future.delayed(Duration(seconds: 2));
                           await _bloc.getCollegeList(false);
                         },
@@ -280,8 +288,7 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                       ElevatedButton(
                         onPressed: () async {
                           await _bloc.acceptOrRejectCollege(
-                              'rejected',
-                              collegeList[index].id.toString());
+                              'rejected', collegeList[index].id.toString());
                           await Future.delayed(Duration(seconds: 2));
                           await _bloc.getCollegeList(false);
                         },
@@ -293,15 +300,16 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
                       Spacer(),
                       IconButton(
                         onPressed: () async {
-                          await _bloc.deleteCollege(
-                              collegeList[index].id.toString());
-                          await Future.delayed(Duration(seconds: 2));
-                          _bloc.getCollegeList(false);
+                          _showDeleteConfirmationDialog(
+                              context, collegeList[index].id.toString());
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
                         ),
-                        icon: Icon(Icons.delete_outline,color: Colors.red,),
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
                       ),
                       SizedBox(width: 20),
                       // Display status dynamically
@@ -316,4 +324,38 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>with LoadMoreLis
     );
   }
 
+  void _showDeleteConfirmationDialog(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Confirmation'),
+          content: Text('Are you sure you want to delete?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                await _bloc.deleteCollege(id);
+                await Future.delayed(Duration(seconds: 2));
+                _bloc.getCollegeList(false);
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

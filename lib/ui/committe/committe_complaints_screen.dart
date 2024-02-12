@@ -65,6 +65,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> wit
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
       complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.phone!.toLowerCase().contains(query.toLowerCase()))
           .toList();
@@ -136,13 +137,10 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> wit
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ComplaintsListResponse resp = snapshot.data!.data;
-                          return _bloc.complaintList.isEmpty
-                              ? SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                ""),
-                          )
-                              : _buildComplaintList(filteredComplaintsList.isNotEmpty
+                          return filteredComplaintsList.isEmpty &&
+                              searchController.text.isNotEmpty
+                              ? CommonApiResultsEmptyWidget("No records found")
+                              :_buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
                               : _bloc.complaintList);
                         case Status.ERROR:
@@ -217,7 +215,7 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> wit
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${complaintsList[index].complaint}",
+                    "${complaintsList[index].name}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,

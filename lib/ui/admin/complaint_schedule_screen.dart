@@ -27,6 +27,7 @@ class ComplaintScheduleScreen extends StatefulWidget {
 class _ComplaintScheduleScreenState extends State<ComplaintScheduleScreen> {
   List<Jury> juryMembers = [];
 
+
   AdminCommitteBloc? _bloc;
   List<int> selectedOptionsIds = [];
   String? toDateInString;
@@ -151,41 +152,51 @@ class _ComplaintScheduleScreenState extends State<ComplaintScheduleScreen> {
                 SizedBox(height: 20,),
                 Text("Choose committee members for schedule", style: TextStyle(fontWeight: FontWeight.w500),),
                 SizedBox(height: 10,),
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: primaryColor),
+                MultiSelectDialogField<Jury>(
+                  items: juryMembers
+                      .map((member) => MultiSelectItem<Jury>(member, member.name.toString()))
+                      .toList(),
+                  initialValue: selectedOptionsIds.map((id) {
+                    return juryMembers.firstWhere((element) => element.id == id);
+                  }).toList(),
+                  selectedColor: primaryColor,
+                  unselectedColor: primaryColor,
+                  confirmText: Text(
+                    'Submit',
+                    style: TextStyle(color: primaryColor),
                   ),
-                  child: MultiSelectDialogField<Jury>(
-                    items: juryMembers
-                        .map((member) => MultiSelectItem<Jury>(member, member.name.toString()))
-                        .toList(),
-                    initialValue: juryMembers,
-                    selectedColor: primaryColor,
-                    unselectedColor: primaryColor,
-                    confirmText: Text(
-                      'Submit',
-                      style: TextStyle(color: primaryColor),
-                    ),
-                    cancelText: Text(
-                      'Cancel',
-                      style: TextStyle(color: primaryColor),
-                    ),
-                    title: Text('Select Committee\n members'),
-                    buttonText: Text('Select Committee members'),
-                    onConfirm: (values) {
-                      setState(() {
-                        selectedOptionsIds = values.map<int>((member) => member.id!).toList();
-                        print("Options: $selectedOptionsIds");
-                      });
-                    },
-                    chipDisplay: MultiSelectChipDisplay(
-                      chipColor: primaryColor,
-                      textStyle: TextStyle(color: Colors.white),
-                    ),
+                  cancelText: Text(
+                    'Cancel',
+                    style: TextStyle(color: primaryColor),
+                  ),
+                  title: Text('Select Committee\n members'),
+                  buttonText: Text('Select Committee members'),
+                  onConfirm: (values) {
+                    setState(() {
+                      selectedOptionsIds = values.map<int>((member) => member.id!).toList();
+                      print("Options: $selectedOptionsIds");
+                    });
+                  },
+                  chipDisplay: MultiSelectChipDisplay(
+                    chipColor: primaryColor,
+                    textStyle: TextStyle(color: Colors.white),
+                  ),
+                  decoration: BoxDecoration( // Customize input decoration
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: primaryColor), // Remove underline
                   ),
                 ),
-                SizedBox(height: 20,),
+                SizedBox(height: 10,),
+                // Wrap(
+                //   children: selectedOptionsIds.map((id) {
+                //     final member = juryMembers.firstWhere((element) => element.id == id);
+                //     return Chip(
+                //       label: Text(member.name.toString()),
+                //       backgroundColor: primaryColor,
+                //       labelStyle: TextStyle(color: Colors.white),
+                //     );
+                //   }).toList(),
+                // ),
                 Text("Google meet link for schedule", style: TextStyle(fontWeight: FontWeight.w500),),
                 SizedBox(height: 10,),
                 TextFormField(
@@ -369,14 +380,8 @@ class _ComplaintScheduleScreenState extends State<ComplaintScheduleScreen> {
       String time,
       String link,
       ) async {
-    var formData = FormData();
 
-    formData.fields..add(MapEntry("scheduled_date",date));
-    formData.fields..add(MapEntry("scheduled_time",DateFormat('HH:mm').format(_sheduleTime!)));
-    formData.fields..add(MapEntry("jury_ids", selectedOptionsIds.toString()));
-    formData.fields..add(MapEntry("meeting_link", link));
-
-    _bloc!.schedule(widget.id,formData).then((value) {
+    _bloc!.schedule(widget.id,DateFormat('HH:mm').format(_sheduleTime!),date,link,selectedOptionsIds).then((value) {
       Get.back();
       CommonResponse response = value;
       if (response.success!) {

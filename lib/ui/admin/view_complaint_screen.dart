@@ -47,7 +47,7 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(color: Colors.white),
-        title: const Text("View", style: TextStyle(color: Colors.white)),
+        title: const Text("complaint Details", style: TextStyle(color: Colors.white)),
       ),
       body: SafeArea(
         child: Padding(
@@ -87,10 +87,7 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Container(
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height + 300,
+                    height: MediaQuery.of(context).size.height * 0.5,
                     width: MediaQuery
                         .of(context)
                         .size
@@ -158,6 +155,7 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
           DetailsTile("Nature of Complaint", widget.details.complaint),
           DetailsTile("Details", widget.details.remarks),
           DetailsTile("Intensity ", widget.details.level),
+          if(widget.details.claim != null)
           DetailsTile("Claim", widget.details.claim ?? ""),
         ],
       ),

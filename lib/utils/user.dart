@@ -7,9 +7,6 @@ class UserDetails {
   static String userEmail = '';
   static String userMobile = '';
   static String userRole = '';
-  static String userProfileClaim="";
-  static String userProfileRegister="";
-  static String userProfileResolve="";
 
 
   static void set(
@@ -19,9 +16,6 @@ class UserDetails {
       String email,
       String mobile,
       String role,
-      String ProfileClaim,
-      String ProfileRegister,
-      String ProfileResolve,
       ) {
     apiToken = token;
     userId = id;
@@ -29,8 +23,5 @@ class UserDetails {
     userEmail = email;
     userMobile = mobile;
     userRole = role;
-    userProfileClaim = ProfileClaim;
-    userProfileRegister = ProfileRegister;
-    userProfileResolve =ProfileResolve;
   }
 }

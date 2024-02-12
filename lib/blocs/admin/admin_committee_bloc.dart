@@ -103,18 +103,25 @@ class AdminCommitteBloc {
     return null;
   }
 
-  Future<CommonResponse> editCommittee(String body,id) async {
+  Future<CommonResponse> editCommittee(id,FormData formdata) async {
     try {
-      CommonResponse response = await _repository!.editCommittee(body,id);
+      CommonResponse response = await _repository!.editCommittee(formdata,id);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);
       throw e;
     }
   }
-  Future<CommonResponse> schedule(String id,FormData formdata) async {
+  schedule(String id, time ,date,link,List<int> seleid) async {
+
+    var formData = {
+      "scheduled_date": date,
+      "scheduled_time": time,
+      "jury_ids": seleid,
+      "meeting_link": link
+    };
     try {
-      CommonResponse response = await _repository!.schedule(id,formdata);
+      CommonResponse response = await _repository!.schedule(id,formData);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);

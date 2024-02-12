@@ -66,6 +66,7 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
       complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.phone!.toLowerCase().contains(query.toLowerCase()))
           .toList();
@@ -137,12 +138,9 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ComplaintsListResponse resp = snapshot.data!.data;
-                          return _bloc.complaintList.isEmpty
-                              ? SizedBox(
-                            height: MediaQuery.of(context).size.height - 180,
-                            child: CommonApiResultsEmptyWidget(
-                                "${resp.message ?? ""}"),
-                          )
+                          return filteredComplaintsList.isEmpty &&
+                              searchController.text.isNotEmpty
+                              ? CommonApiResultsEmptyWidget("No records found")
                               : _buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
                               : _bloc.complaintList);
@@ -219,11 +217,11 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                 children: [
                   SizedBox(height: 7,),
                   Text(
-                    "Complaint : ${complaintsList[index].complaint}",
+                    "${complaintsList[index].name}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: primaryColor,
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 4,),
@@ -244,6 +242,14 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                       color: Colors.black,
                     ),
                   ),
+                  Text(
+                    "Complaint : ${complaintsList[index].complaint}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: primaryColor,
+                    ),
+                  ),
                   Row(
                     children: [
                       ElevatedButton(
@@ -259,10 +265,7 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                       SizedBox(width: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          await _bloc.deleteComplaint(
-                              complaintsList[index].id.toString());
-                          await Future.delayed(Duration(seconds: 2));
-                          _bloc.getComplaintsList(false);
+                          _showDeleteConfirmationDialog( context,complaintsList[index].id.toString());
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
@@ -277,6 +280,34 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
           );
         },
       ),
+    );
+  }
+  void _showDeleteConfirmationDialog(BuildContext context,String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Confirmation'),
+          content: Text('Are you sure you want to delete?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async{
+                await _bloc.deleteComplaint(id);
+                await Future.delayed(Duration(seconds: 2));
+                _bloc.getComplaintsList(false);
+                Navigator.of(context).pop();
+              },
+              child: Text('Delete',style: TextStyle(color: Colors.red),),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel',style: TextStyle(color: primaryColor),),
+            ),
+          ],
+        );
+      },
     );
   }
 }
