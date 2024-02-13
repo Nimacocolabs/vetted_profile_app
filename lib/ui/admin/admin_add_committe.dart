@@ -254,7 +254,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
       }
     }).catchError((err) {
       Get.back();
-      toastMessage('${err}');
+      toastMessage('Email already taken!');
     });
   }
 

@@ -317,7 +317,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } catch (e, s) {
       Completer().completeError(e, s);
       Get.back();
-      toastMessage('Something went wrong. Please try again');
+      toastMessage('Email already taken!');
     }
   }
 

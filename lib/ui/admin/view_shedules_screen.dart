@@ -7,6 +7,7 @@ import 'package:faculty_app/utils/user.dart';
 import 'package:flutter/material.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
@@ -66,13 +67,21 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
     }
   }
 
+  String _formatDate(String? dateString) {
+    if (dateString != null && dateString.isNotEmpty) {
+      final dateTime = DateTime.parse(dateString);
+      return DateFormat('dd-MM-yyyy').format(dateTime);
+    } else {
+      return '';
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
     _tabController = TabController(length: 5, vsync: this);
     _fetchJuryDetailsFuture = _fetchJuryDetails();
-    // _fetchJuryDetails();
   }
 
   @override
@@ -143,7 +152,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
                         ),
                       Row(
                         children: [
-                          UserDetails.userRole == "committee" && verdict == null
+                          UserDetails.userRole == "committee" && verdict == null && DateTime.now().isAfter(DateTime.parse(widget.details.scheduledDate!))
                               ? Align(
                               alignment: AlignmentDirectional.bottomEnd,
                               child: ElevatedButton(
@@ -280,7 +289,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle("Hearings Details"),
-          DetailsTile("Schedule Date", widget.details.scheduledDate),
+          DetailsTile("Schedule Date", _formatDate(widget.details.scheduledDate)),
           DetailsTile("Schedule Time", widget.details.scheduledTime),
           DetailsTile("Schedule", widget.details.hearingStatus ?? ""),
           DetailsTile("Google meet", ""),

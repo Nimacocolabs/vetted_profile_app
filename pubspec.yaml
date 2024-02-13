@@ -37,17 +37,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   fluttertoast: ^8.0.9
   get: ^4.6.5
-  package_info_plus: ^1.4.3+1
+  package_info_plus: ^4.0.2
   shared_preferences: ^2.0.15
   dio: ^4.0.6
   intl: ^0.17.0
   cached_network_image: ^3.2.1
   image_picker: ^0.8.5+3
-  flutter_image_stack: ^0.0.6
-  dotted_border: ^2.0.0+2
-  carousel_slider: ^4.1.1
-  paytm_allinonesdk: ^1.1.8
-  photo_view: ^0.14.0
   url_launcher: ^6.1.5
   flutter_rating_bar: ^4.0.1
   flutter_pagewise: ^2.0.4
@@ -55,10 +50,6 @@ dependencies:
   path_provider: ^2.0.11
   permission_handler: ^10.2.0
   flutter_easyloading: ^3.0.0
-  syncfusion_flutter_charts: ^20.3.60
-  flick_video_player: ^0.5.0
-  video_player: ^2.4.9
-  visibility_detector: ^0.3.3
   google_fonts: ^4.0.3
   multi_select_flutter: ^4.1.3
 

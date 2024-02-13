@@ -167,7 +167,8 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                               textColorReceived: Colors.black);
                       }
                     }
-                    return CommonApiLoader();
+                    return SizedBox(
+                        height: MediaQuery.of(context).size.height - 180, child: CommonApiLoader());
                   }),
               if (isLoadingMore) LinearLoader(),
               SizedBox(

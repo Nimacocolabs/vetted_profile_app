@@ -9,8 +9,9 @@ import 'package:faculty_app/utils/shared_prefs.dart';
 import 'package:faculty_app/utils/user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import 'package:package_info_plus/package_info_plus.dart';
+
+
 
 class SplashScreen extends StatefulWidget {
   final bool isFromLogout;

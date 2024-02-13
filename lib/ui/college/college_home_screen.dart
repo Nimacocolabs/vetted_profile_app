@@ -23,7 +23,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
   @override
 
   AuthRepository LogOut = AuthRepository();
-
+  int? total;
   int? _profilesClaimed;
   int? _profilesRegistered;
   int? _profilesResolved;
@@ -47,6 +47,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
         final jsonResponse = json.decode(response.body);
         final details = jsonResponse['details'];
         setState(() {
+          total=details['total_profiles'];
           _profilesClaimed = details['profiles']['claimed'];
           _profilesRegistered = details['profiles']['registered'];
           _profilesResolved = details['profiles']['resolved'];
@@ -191,10 +192,16 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                                       ),
                                     ),
                                     SizedBox(height: 8),
-                                    if (_profilesClaimed != null && _profilesRegistered != null && _profilesResolved != null)
+                                    if (total !=null && _profilesClaimed != null && _profilesRegistered != null && _profilesResolved != null)
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
+                                          Text(
+                                            "Total : $total",style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white
+                                          ),
+                                          ),
                                           Text(
                                             "Claimed : $_profilesClaimed",style: TextStyle(
                                               fontWeight: FontWeight.bold,

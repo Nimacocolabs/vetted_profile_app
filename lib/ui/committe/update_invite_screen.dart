@@ -4,6 +4,7 @@ import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -25,6 +26,14 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
   TextFieldControl _detailed = TextFieldControl();
 
   FormatAndValidate formatAndValidate = FormatAndValidate();
+  String _formatDate(String? dateString) {
+    if (dateString != null && dateString.isNotEmpty) {
+      final dateTime = DateTime.parse(dateString);
+      return DateFormat('dd-MM-yyyy').format(dateTime);
+    } else {
+      return '';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +59,7 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Date for schedule : ${widget.date}", style: TextStyle(fontWeight: FontWeight.w500),),
+                Text("Date for schedule : ${_formatDate(widget.date)}", style: TextStyle(fontWeight: FontWeight.w500),),
                 SizedBox(height: 10,),
                 Text("Time for schedule : ${widget.time}", style: TextStyle(fontWeight: FontWeight.w500),),
                 SizedBox(height: 20,),
@@ -155,7 +164,7 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
                   Row(
                     children: [
                       Radio(
-                        value: 'postponsed',
+                        value: 'postponed',
                         groupValue: intensity,
                         onChanged: (value) {
                           setState(() {
