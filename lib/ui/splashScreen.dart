@@ -51,6 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
       //      return Get.offAll(() => LoginScreen());
       //   }
       // });
+
     });
     Timer(
         Duration(seconds: 5),
