@@ -111,6 +111,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
+    // print("fv${DateTime.now().isAfter(DateTime.parse("2024-02-11"))}");
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -152,7 +153,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
                         ),
                       Row(
                         children: [
-                          UserDetails.userRole == "committee" && verdict == null && DateTime.now().isAfter(DateTime.parse(widget.details.scheduledDate!))
+                          UserDetails.userRole == "committee" && verdict == null
                               ? Align(
                               alignment: AlignmentDirectional.bottomEnd,
                               child: ElevatedButton(

@@ -14,7 +14,7 @@ import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -58,14 +58,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       .size
                       .height * 0.1,
                 ),
-                Text("Vetted Profile", style: GoogleFonts.aladin(fontSize: 30,
-                    fontWeight: FontWeight.bold,color: Colors.white)),
-                // Image.asset(
-                //   "assets/images/logoicon.png",
-                //   height: 150,
-                // ),
+                Image.asset(
+                  "assets/images/logo2-white.png",
+                  height: 150,
+                ),
                 SizedBox(
-                  height: 60,
+                  height: 30,
                 ),
                 Card(
                   child: Container(
@@ -89,8 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(
                             child: Text(
                               "LOGIN",
-                              style: GoogleFonts.aladin(
-                                  fontWeight: FontWeight.w200, fontSize: 30),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 30,fontFamily: 'Inter',),
                             )),
                         SizedBox(
                           height: 15,
@@ -99,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Text(
                               "WELCOME ! Login with your Credentials",
                               style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
+                                  fontSize: 12, fontWeight: FontWeight.w600),
                             )),
                         SizedBox(
                           height: 25,

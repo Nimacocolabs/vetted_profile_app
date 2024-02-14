@@ -123,11 +123,10 @@ class AdminScheduleBloc {
   }
 
   Future<CommonResponse> addComments( String id,
-      String intensity,
-      String details,
+      String body,
       ) async {
     try {
-      CommonResponse response = await _repository!.addComments(id,intensity,details);
+      CommonResponse response = await _repository!.addComments(id,body);
       return response;
     } catch (e, s) {
       Completer().completeError(e, s);

@@ -1,9 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:faculty_app/blocs/admin/admin_scheduled_bloc.dart';
+import 'package:faculty_app/models/common_response.dart';
+import 'package:faculty_app/ui/committe/committe_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -274,11 +281,28 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
       String intensity,
       String details,
       ) async {
-    await _bloc.addComments(widget.id,
-      intensity,
-      details,
 
-    );
+    AppDialogs.loading();
+
+    Map<String, dynamic> body = {};
+    body["status"] = intensity;
+    if (details.isNotEmpty) body["verdict"] = details;
+
+    try {
+      CommonResponse response =
+      await _bloc!.addComments(widget.id,json.encode(body));
+      Get.back();
+      if (response.success!) {
+        Get.to(CommitteHomeScreen());
+        toastMessage('${response.message!}');
+      } else {
+        toastMessage('${response.message!}');
+      }
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      toastMessage('Hearing not started yet!');
+      Get.to(CommitteHomeScreen());
+    }
   }
 
 }
