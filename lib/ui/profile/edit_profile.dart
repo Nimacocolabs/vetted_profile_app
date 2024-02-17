@@ -277,7 +277,7 @@ class _EditProfileState extends State<EditProfile> {
       CommonResponse response = value;
       if (response.success!) {
         Fluttertoast.showToast(msg: "${response.message}");
-        Get.to(() => ProfileScreenUser());
+        Get.offAll(() => ProfileScreenUser());
       } else {
         Fluttertoast.showToast(
             msg: "${response.message}");

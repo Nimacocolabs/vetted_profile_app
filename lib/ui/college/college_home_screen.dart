@@ -24,6 +24,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
 
   AuthRepository LogOut = AuthRepository();
   int? total;
+  int? totalCollege;
   int? _profilesClaimed;
   int? _profilesRegistered;
   int? _profilesResolved;
@@ -48,6 +49,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
         final details = jsonResponse['details'];
         setState(() {
           total=details['total_profiles'];
+          totalCollege=details['college_profiles'];
           _profilesClaimed = details['profiles']['claimed'];
           _profilesRegistered = details['profiles']['registered'];
           _profilesResolved = details['profiles']['resolved'];
@@ -130,7 +132,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 20.0, right: 200, left: 20),
+                      padding: const EdgeInsets.only(top: 20.0, right: 160, left: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -162,67 +164,125 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 10),
-                        Container(
-                          width: double.infinity,
-                          child: Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
+                        InkWell(
+                          onTap: (){
+                            Get.to(CollegeComplaintsScreen());
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [primaryColor, secondaryColor], // Specify your gradient colors here
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                    colors: [primaryColor, secondaryColor], // Specify your gradient colors here
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Our Complaints",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      if (totalCollege !=null && _profilesClaimed != null && _profilesRegistered != null && _profilesResolved != null)
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Total : $totalCollege",style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),
+                                            ),
+                                            Text(
+                                              "Claimed : $_profilesClaimed",style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),
+                                            ),
+                                            Text(
+                                              "Registered : $_profilesRegistered",style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),
+                                            ),
+                                            Text(
+                                              "Resolved : $_profilesResolved",style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Profiles",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: primaryColor
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: (){
+                            Get.to(CollegeAllComplaintsScreen());
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            child: Card(
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                    colors: [primaryColor, secondaryColor], // Specify your gradient colors here
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "All Complaints",
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: primaryColor
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 8),
-                                    if (total !=null && _profilesClaimed != null && _profilesRegistered != null && _profilesResolved != null)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Total : $total",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                          Text(
-                                            "Claimed : $_profilesClaimed",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                          Text(
-                                            "Registered : $_profilesRegistered",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                          Text(
-                                            "Resolved : $_profilesResolved",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                        ],
-                                      ),
-                                  ],
+                                      SizedBox(height: 8),
+                                      if (total !=null)
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Total : $total",style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                            ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -260,9 +320,9 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                           width: MediaQuery.of(context).size.width * 1,
                           child: GridView.count(
                             shrinkWrap: true,
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 15,
-                            mainAxisSpacing: 15,
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
                             children: [
                               _buildFunctionalityCard(
                                 title: 'Our Complaints',
@@ -320,7 +380,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Container(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.all(5.0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topRight,
@@ -339,7 +399,7 @@ class _CollegeHomeScreenState extends State<CollegeHomeScreen> {
                 ),
                 child: Icon(
                   icon,
-                  size: 40,
+                  size: 25,
                   color: Colors.white,
                 ),
               ),

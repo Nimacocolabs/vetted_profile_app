@@ -262,10 +262,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                   Get.to(AdminScheduleScreen()) ;
                                 },
                               ),
+                              // _buildFunctionalityCard(
+                              //   title: 'Hearings',
+                              //   icon: Icons.history,
+                              //   onPressed: () {
+                              //     Get.to(AdminScheduleScreen()) ;
+                              //   },
+                              // ),
                             ],
                           ),
                         ),
-                        SizedBox(height: 10,),
                       ],
                     ),
                   ),

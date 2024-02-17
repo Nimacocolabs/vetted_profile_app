@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return  GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Faculty App",
+      title: "FOCS",
       routes: {
         '/': (BuildContext context) => const SplashScreen(),
         // '/home': (BuildContext context) => HomeView(),

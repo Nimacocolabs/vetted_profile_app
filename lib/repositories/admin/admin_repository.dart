@@ -107,7 +107,6 @@ class AdminRepository {
   }
 
   Future<CommonResponse> schedule(String id, Map<String, dynamic> body) async {
-    print("=>${body}");
     Response response = await apiClient!
         .getJsonInstance()
         .post('${Apis.schedule}$id/store', data: body);
@@ -120,6 +119,14 @@ class AdminRepository {
     Response response = await apiClient!
         .getJsonInstance()
         .post('${Apis.addComments}$id/store', data: body);
+    return CommonResponse.fromJson(response.data);
+  }
+
+  Future<CommonResponse> addFinalComments(String id,
+      String body) async {
+    Response response = await apiClient!
+        .getJsonInstance()
+        .patch('${Apis.addfinalComments}$id/update-status', data: body);
     return CommonResponse.fromJson(response.data);
   }
 }

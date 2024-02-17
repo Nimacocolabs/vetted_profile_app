@@ -43,6 +43,8 @@ class Colleges {
   String? address;
   String? city;
   String? state;
+  String? transactionId;
+  String? paymentStatus;
 
   Colleges(
       {this.id,
@@ -54,7 +56,9 @@ class Colleges {
         this.status,
         this.address,
         this.city,
-        this.state});
+        this.state,
+        this.transactionId,
+        this.paymentStatus});
 
   Colleges.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -67,6 +71,8 @@ class Colleges {
     address = json['address'];
     city = json['city'];
     state = json['state'];
+    transactionId = json['transaction_id'];
+    paymentStatus = json['payment_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -81,6 +87,8 @@ class Colleges {
     data['address'] = this.address;
     data['city'] = this.city;
     data['state'] = this.state;
+    data['transaction_id'] = this.transactionId;
+    data['payment_status'] = this.paymentStatus;
     return data;
   }
 }
@@ -89,13 +97,15 @@ class Pages {
   int? total;
   int? page;
   int? lastPage;
+  String? recordsRange;
 
-  Pages({this.total, this.page, this.lastPage});
+  Pages({this.total, this.page, this.lastPage, this.recordsRange});
 
   Pages.fromJson(Map<String, dynamic> json) {
     total = json['total'];
     page = json['page'];
     lastPage = json['last_page'];
+    recordsRange = json['records_range'];
   }
 
   Map<String, dynamic> toJson() {
@@ -103,6 +113,7 @@ class Pages {
     data['total'] = this.total;
     data['page'] = this.page;
     data['last_page'] = this.lastPage;
+    data['records_range'] = this.recordsRange;
     return data;
   }
 }

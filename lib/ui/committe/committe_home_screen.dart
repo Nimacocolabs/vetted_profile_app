@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:faculty_app/repositories/auth_repository.dart';
 import 'package:faculty_app/ui/admin/admin_schedules_screen.dart';
-import 'package:faculty_app/ui/committe/committee_invites_screen.dart';
 import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:faculty_app/ui/committe/committe_complaints_screen.dart';
 import 'package:flutter/material.dart';
@@ -180,179 +178,184 @@ class _CommitteHomeScreenState extends State<CommitteHomeScreen> {
                         //     // ),
                         //   ],
                         // ),
-                        Container(
-                          width: double.infinity,
+
+
+                        // Container(
+                        //   width: double.infinity,
+                        //   child: Card(
+                        //     elevation: 3,
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //     child: Container(
+                        //       decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         gradient: LinearGradient(
+                        //           begin: Alignment.topRight,
+                        //           end: Alignment.bottomLeft,
+                        //           colors: [primaryColor,secondaryColor], // Specify your gradient colors here
+                        //         ),
+                        //       ),
+                        //       child: Padding(
+                        //         padding: EdgeInsets.all(16.0),
+                        //         child: Column(
+                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                        //           children: [
+                        //             Text(
+                        //               "Profiles",
+                        //               style: TextStyle(
+                        //                   fontSize: 18,
+                        //                   fontWeight: FontWeight.bold,
+                        //                   color: primaryColor
+                        //               ),
+                        //             ),
+                        //             SizedBox(height: 8),
+                        //             if (_profilesClaimed != null  && _profilesResolved != null)
+                        //               Column(
+                        //                 crossAxisAlignment: CrossAxisAlignment.start,
+                        //                 children: [
+                        //                   Text(
+                        //                     "Claimed : $_profilesClaimed",style: TextStyle(
+                        //                       fontWeight: FontWeight.bold,
+                        //                       color: Colors.white
+                        //                   ),
+                        //                   ),
+                        //                   Text(
+                        //                     "Resolved : $_profilesResolved",style: TextStyle(
+                        //                       fontWeight: FontWeight.bold,
+                        //                       color: Colors.white
+                        //                   ),
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //       color: Colors.white,
+                        //       borderRadius: BorderRadius.only(
+                        //           topLeft: Radius.circular(50), topRight: Radius.circular(50))),
+                        //   height: MediaQuery.of(context).size.height * 0.5,
+                        //   width: MediaQuery.of(context).size.width * 1,
+                        //   child: GridView.count(
+                        //     shrinkWrap: true,
+                        //     crossAxisCount: 2,
+                        //     crossAxisSpacing: 15,
+                        //     mainAxisSpacing: 15,
+                        //     children: [
+                        //       _buildFunctionalityCard(
+                        //         title: 'Complaints',
+                        //         icon: Icons.comment_sharp,
+                        //         onPressed: () {
+                        //           Get.to(CommitteComplaintsScreen());
+                        //         },
+                        //       ),
+                        //       _buildFunctionalityCard(
+                        //         title: 'Invites',
+                        //         icon: Icons.insert_invitation,
+                        //         onPressed: () {
+                        //           Get.to(AdminScheduleScreen());
+                        //         },
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+
+                        SizedBox(height: 50,),
+                        GestureDetector(
+                          onTap: (){
+                            Get.to(CommitteComplaintsScreen());
+                          },
                           child: Card(
                             elevation: 3,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Container(
+                              padding: EdgeInsets.all(10.0),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
                                   begin: Alignment.topRight,
                                   end: Alignment.bottomLeft,
-                                  colors: [primaryColor,secondaryColor], // Specify your gradient colors here
+                                  colors: [secondaryColor, primaryColor],
                                 ),
+                                borderRadius: BorderRadius.circular(10), // Set your desired color
                               ),
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Profiles",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: primaryColor
-                                      ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
                                     ),
-                                    SizedBox(height: 8),
-                                    if (_profilesClaimed != null  && _profilesResolved != null)
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Claimed : $_profilesClaimed",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                          Text(
-                                            "Resolved : $_profilesResolved",style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white
-                                          ),
-                                          ),
-                                        ],
-                                      ),
-                                  ],
-                                ),
+                                    child: Icon(
+                                      Icons.comment_sharp,
+                                      size: 40,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Complaints",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(50), topRight: Radius.circular(50))),
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          width: MediaQuery.of(context).size.width * 1,
-                          child: GridView.count(
-                            shrinkWrap: true,
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 15,
-                            mainAxisSpacing: 15,
-                            children: [
-                              _buildFunctionalityCard(
-                                title: 'Complaints',
-                                icon: Icons.comment_sharp,
-                                onPressed: () {
-                                  Get.to(CommitteComplaintsScreen());
-                                },
+                        SizedBox(height: 20,),
+                        GestureDetector(
+                          onTap: (){
+                            Get.to(AdminScheduleScreen());
+                          },
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              padding: EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [secondaryColor, primaryColor],
+                                ),
+                                borderRadius: BorderRadius.circular(10), // Set your desired color
                               ),
-                              _buildFunctionalityCard(
-                                title: 'Invites',
-                                icon: Icons.insert_invitation,
-                                onPressed: () {
-                                  Get.to(AdminScheduleScreen());
-                                },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.insert_invitation,
+                                      size: 40,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Invites",
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                        // GestureDetector(
-                        //   onTap: (){
-                        //     Get.to(CommitteComplaintsScreen());
-                        //   },
-                        //   child: Card(
-                        //     elevation: 3,
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //     child: Container(
-                        //       padding: EdgeInsets.all(10.0),
-                        //       decoration: BoxDecoration(
-                        //         gradient: LinearGradient(
-                        //           begin: Alignment.topRight,
-                        //           end: Alignment.bottomLeft,
-                        //           colors: [secondaryColor, primaryColor],
-                        //         ),
-                        //         borderRadius: BorderRadius.circular(10), // Set your desired color
-                        //       ),
-                        //       child: Row(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         children: [
-                        //           Container(
-                        //             padding: EdgeInsets.all(10),
-                        //             decoration: BoxDecoration(
-                        //               shape: BoxShape.circle,
-                        //             ),
-                        //             child: Icon(
-                        //               Icons.comment_sharp,
-                        //               size: 40,
-                        //               color: Colors.white,
-                        //             ),
-                        //           ),
-                        //           SizedBox(height: 5),
-                        //           Text(
-                        //             "Complaints",
-                        //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                        //             textAlign: TextAlign.center,
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: 20,),
-                        // GestureDetector(
-                        //   onTap: (){
-                        //     Get.to(AdminScheduleScreen());
-                        //   },
-                        //   child: Card(
-                        //     elevation: 3,
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //     child: Container(
-                        //       padding: EdgeInsets.all(10.0),
-                        //       decoration: BoxDecoration(
-                        //         gradient: LinearGradient(
-                        //           begin: Alignment.topRight,
-                        //           end: Alignment.bottomLeft,
-                        //           colors: [secondaryColor, primaryColor],
-                        //         ),
-                        //         borderRadius: BorderRadius.circular(10), // Set your desired color
-                        //       ),
-                        //       child: Row(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         children: [
-                        //           Container(
-                        //             padding: EdgeInsets.all(10),
-                        //             decoration: BoxDecoration(
-                        //               shape: BoxShape.circle,
-                        //             ),
-                        //             child: Icon(
-                        //               Icons.insert_invitation,
-                        //               size: 40,
-                        //               color: Colors.white,
-                        //             ),
-                        //           ),
-                        //           SizedBox(height: 5),
-                        //           Text(
-                        //             "Invites",
-                        //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                        //             textAlign: TextAlign.center,
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

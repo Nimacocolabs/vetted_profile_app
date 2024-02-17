@@ -64,10 +64,10 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> wit
     setState(() {
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
-      complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
-          complaint.phone!.toLowerCase().contains(query.toLowerCase()))
+          complaint.phone!.toLowerCase().contains(query.toLowerCase()) ||
+              complaint.status!.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -137,8 +137,9 @@ class _CommitteComplaintsScreenState extends State<CommitteComplaintsScreen> wit
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ComplaintsListResponse resp = snapshot.data!.data;
-                          return filteredComplaintsList.isEmpty &&
-                              searchController.text.isNotEmpty
+                          List<Profiles> complaintList = _bloc.complaintList;
+                          return (complaintList.isEmpty) ||
+                              (filteredComplaintsList.isEmpty && searchController.text.isNotEmpty)
                               ? CommonApiResultsEmptyWidget("No records found")
                               :_buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList

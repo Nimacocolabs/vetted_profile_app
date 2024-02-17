@@ -1,5 +1,6 @@
 class Apis {
   static String registerUser = 'api/register-college';
+  static String addPayment="api/colleges/";
   static String loginUser = 'api/login';
   static String logOutUser='api/logout';
   static String forgotPassword="api/forgot-password";
@@ -18,6 +19,7 @@ class Apis {
   static String fetchSheduledList="api/profiles/hearings/table";
   static String fetchSheduledData="api/profiles/";
   static String delectSchedule="api/admin/profiles/hearings/";
+  static String addfinalComments="api/admin/profiles/";
 
 
   //college

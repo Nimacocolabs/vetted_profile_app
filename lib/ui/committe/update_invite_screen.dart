@@ -6,6 +6,7 @@ import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
+import 'package:faculty_app/utils/user.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,7 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
 
   final AdminScheduleBloc _bloc = AdminScheduleBloc();
   String? intensity;
+  String? judgement;
   TextFieldControl _detailed = TextFieldControl();
 
   FormatAndValidate formatAndValidate = FormatAndValidate();
@@ -116,6 +118,7 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
                       ],
                     )),
                 SizedBox(height: 25,),
+            if(UserDetails.userRole =="committee")
             Container(
               padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -168,27 +171,27 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Radio(
-                        value: 'postponed',
-                        groupValue: intensity,
-                        onChanged: (value) {
-                          setState(() {
-                            intensity = value.toString();
-                          });
-                        },
-                        activeColor: primaryColor,
-                      ),
-                      Text(
-                        "Postponed",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Radio(
+                  //       value: 'postponed',
+                  //       groupValue: intensity,
+                  //       onChanged: (value) {
+                  //         setState(() {
+                  //           intensity = value.toString();
+                  //         });
+                  //       },
+                  //       activeColor: primaryColor,
+                  //     ),
+                  //     Text(
+                  //       "Postponed",
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.w500,
+                  //         fontSize: 16,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   Text(
                     "Judgements",
                     style: TextStyle(fontWeight: FontWeight.w500),
@@ -241,6 +244,80 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
                 ],
               ),
             ),
+                if(UserDetails.userRole =="admin")
+                  Container(
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey), // Border color
+                      borderRadius: BorderRadius.circular(10), // Border radius
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Status",
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Radio(
+                              value: 'resolved',
+                              groupValue: judgement,
+                              onChanged: (value) {
+                                setState(() {
+                                  judgement = value.toString();
+                                });
+                              },
+                              activeColor: primaryColor,
+                            ),
+                            Text(
+                              "Approve",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Radio(
+                              value: 'rejected',
+                              groupValue: judgement,
+                              onChanged: (value) {
+                                setState(() {
+                                  judgement = value.toString();
+                                });
+                              },
+                              activeColor: primaryColor,
+                            ),
+                            Text(
+                              "Reject",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10,),
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height:35,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                _validate1();
+                              },
+                              style: ElevatedButton.styleFrom(primary: primaryColor),
+                              child: Text("Submit"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
               ],
             ),
@@ -291,6 +368,45 @@ class _UpdateInviteScreenState extends State<UpdateInviteScreen> {
     try {
       CommonResponse response =
       await _bloc!.addComments(widget.id,json.encode(body));
+      Get.back();
+      if (response.success!) {
+        Get.to(CommitteHomeScreen());
+        toastMessage('${response.message!}');
+      } else {
+        toastMessage('${response.message!}');
+      }
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      toastMessage('Hearing not started yet!');
+      Get.to(CommitteHomeScreen());
+    }
+  }
+
+
+  _validate1() async {
+
+
+    if (judgement == null) {
+      return toastMessage("Please select status");
+    }
+
+    await _addComments1(
+      judgement!,
+
+    );
+  }
+  Future _addComments1(
+      String judgement,
+      ) async {
+
+    AppDialogs.loading();
+
+    Map<String, dynamic> body = {};
+    body["status"] = judgement;
+
+    try {
+      CommonResponse response =
+      await _bloc!.addfinalComments(widget.id.toString(),json.encode(body));
       Get.back();
       if (response.success!) {
         Get.to(CommitteHomeScreen());

@@ -63,20 +63,12 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
     setState(() {
       filteredCollegesList = _bloc.collegeList
           .where((college) =>
-      college.userName!
-          .toLowerCase()
-          .contains(query.toLowerCase()) ||
-          college.collegeName!
-              .toLowerCase()
-              .contains(query.toLowerCase()) ||
-          college.collegeEmail!
-              .toLowerCase()
-              .contains(query.toLowerCase()) ||
-          college.collegePhone!
-              .toLowerCase()
-              .contains(query.toLowerCase()) ||
-          college.address!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      college.userName!.toLowerCase().contains(query.toLowerCase()) ||
+          college.collegeName!.toLowerCase().contains(query.toLowerCase()) ||
+          college.collegeEmail!.toLowerCase().contains(query.toLowerCase()) ||
+          college.collegePhone!.toLowerCase().contains(query.toLowerCase()) ||
+          college.address!.toLowerCase().contains(query.toLowerCase()) ||
+          college.paymentStatus!.toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
 
@@ -154,8 +146,9 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           CollegeListResponse resp = snapshot.data!.data;
-                          return filteredCollegesList.isEmpty &&
-                              searchController.text.isNotEmpty
+                          List<Colleges> collegeList = _bloc.collegeList;
+                          return (collegeList.isEmpty) ||
+                              (filteredCollegesList.isEmpty && searchController.text.isNotEmpty)
                               ? CommonApiResultsEmptyWidget("No records found")
                               : _buildCollegeList(
                               filteredCollegesList.isNotEmpty
@@ -271,21 +264,67 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                     ),
                   ),
                   SizedBox(height: 5),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width - 150,
+                    child: Text(
+                      "Payment : ${collegeList[index].paymentStatus}",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  if (collegeList[index].paymentStatus == "paid")
+                    Row(
+                      children: [
+                          ElevatedButton(
+                            onPressed: () async {
+                              await _bloc.acceptOrRejectCollege(
+                                  'approved', collegeList[index].id.toString());
+                              await Future.delayed(Duration(seconds: 2));
+                              await _bloc.getCollegeList(false);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green,
+                            ),
+                            child: Text("Approve"),
+                          ),
+                        SizedBox(width: 15),
+                        ElevatedButton(
+                          onPressed: () async {
+                            await _bloc.acceptOrRejectCollege(
+                                'rejected', collegeList[index].id.toString());
+                            await Future.delayed(Duration(seconds: 2));
+                            await _bloc.getCollegeList(false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                          child: Text("Reject"),
+                        ),
+                        Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            _showDeleteConfirmationDialog(
+                                context, collegeList[index].id.toString());
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                          ),
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(width: 20),
+                        // Display status dynamically
+                      ],
+                    ),
+                  if (collegeList[index].paymentStatus == "unpaid")
                   Row(
                     children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _bloc.acceptOrRejectCollege(
-                              'approved', collegeList[index].id.toString());
-                          await Future.delayed(Duration(seconds: 2));
-                          await _bloc.getCollegeList(false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
-                        ),
-                        child: Text("Approve"),
-                      ),
-                      SizedBox(width: 15),
                       ElevatedButton(
                         onPressed: () async {
                           await _bloc.acceptOrRejectCollege(

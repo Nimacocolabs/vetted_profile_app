@@ -134,6 +134,18 @@ class AdminScheduleBloc {
     }
   }
 
+  Future<CommonResponse> addfinalComments( String id,
+      String body,
+      ) async {
+    try {
+      CommonResponse response = await _repository!.addFinalComments(id,body);
+      return response;
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      throw e;
+    }
+  }
+
 
 
 }

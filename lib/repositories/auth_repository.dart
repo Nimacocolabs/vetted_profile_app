@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:faculty_app/models/common_response.dart';
-import 'package:faculty_app/models/signup_response.dart';
+import 'package:faculty_app/models/register_response.dart';
+import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/network/api_provider.dart';
 import 'package:faculty_app/network/apis.dart';
 import 'package:faculty_app/utils/api_helper.dart';
@@ -15,11 +16,11 @@ class AuthRepository {
   AuthRepository() {
     if (apiClient == null) apiClient = new ApiProvider();
   }
-  Future<CommonResponse> registerUser(String body) async {
+  Future<RegisterResponse> registerUser(String body) async {
     Response response = await apiClient!
         .getJsonInstance()
         .post(Apis.registerUser, data: body);
-    return CommonResponse.fromJson(response.data);
+    return RegisterResponse.fromJson(response.data);
   }
 
   Future<LoginSignupResponse> login(String body) async {
@@ -54,5 +55,13 @@ class AuthRepository {
     } catch (error) {
       print(error);
     }
+  }
+
+  Future<CommonResponse> addPayment(String id,
+      String body) async {
+    Response response = await apiClient!
+        .getJsonInstance()
+        .patch('${Apis.addPayment}$id/transaction-id', data: body);
+    return CommonResponse.fromJson(response.data);
   }
 }

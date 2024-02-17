@@ -65,10 +65,10 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
     setState(() {
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
-      complaint.complaint!.toLowerCase().contains(query.toLowerCase()) ||
-          complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
+      complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
           complaint.email!.toLowerCase().contains(query.toLowerCase()) ||
-          complaint.phone!.toLowerCase().contains(query.toLowerCase()))
+          complaint.phone!.toLowerCase().contains(query.toLowerCase()) ||
+          complaint.status!.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
   }
@@ -138,8 +138,9 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ComplaintsListResponse resp = snapshot.data!.data;
-                          return filteredComplaintsList.isEmpty &&
-                              searchController.text.isNotEmpty
+                          List<Profiles> complaintList = _bloc.complaintList;
+                          return (complaintList.isEmpty) ||
+                              (filteredComplaintsList.isEmpty && searchController.text.isNotEmpty)
                               ? CommonApiResultsEmptyWidget("No records found")
                               : _buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
@@ -175,6 +176,7 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
         physics: NeverScrollableScrollPhysics(),
         itemCount: complaintsList.length, // Replace with the actual number of colleges
         itemBuilder: (context, index) {
+          print("Status-->${complaintsList[index].status}");
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(
@@ -243,13 +245,15 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                     ),
                   ),
                   Text(
-                    "Complaint : ${complaintsList[index].complaint}",
+                    "Status : ${complaintsList[index].status!.toUpperCase()}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                       color: primaryColor,
                     ),
                   ),
+                  SizedBox(height: 7,),
+                  complaintsList[index].status== "registered" ?
                   Row(
                     children: [
                       ElevatedButton(
@@ -263,6 +267,19 @@ class _CollegeComplaintsScreenState extends State<CollegeComplaintsScreen> with 
                         child: Text("Edit",style: TextStyle(color: primaryColor),),
                       ),
                       SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          _showDeleteConfirmationDialog( context,complaintsList[index].id.toString());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                        ),
+                        child: Text("Delete"),
+                      ),
+                    ],
+                  ) :
+                  Row(
+                    children: [
                       ElevatedButton(
                         onPressed: () async {
                           _showDeleteConfirmationDialog( context,complaintsList[index].id.toString());

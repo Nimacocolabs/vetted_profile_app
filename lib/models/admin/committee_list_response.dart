@@ -40,6 +40,8 @@ class Committee {
   String? phone;
   String? phone2;
   String? image;
+  String? languages;
+  String? state;
   String? imageUrl;
 
   Committee(
@@ -49,6 +51,8 @@ class Committee {
         this.phone,
         this.phone2,
         this.image,
+        this.languages,
+        this.state,
         this.imageUrl});
 
   Committee.fromJson(Map<String, dynamic> json) {
@@ -58,6 +62,8 @@ class Committee {
     phone = json['phone'];
     phone2 = json['phone2'];
     image = json['image'];
+    languages = json['languages'];
+    state = json['state'];
     imageUrl = json['image_url'];
   }
 
@@ -69,6 +75,8 @@ class Committee {
     data['phone'] = this.phone;
     data['phone2'] = this.phone2;
     data['image'] = this.image;
+    data['languages'] = this.languages;
+    data['state'] = this.state;
     data['image_url'] = this.imageUrl;
     return data;
   }
@@ -78,13 +86,15 @@ class Pages {
   int? total;
   int? page;
   int? lastPage;
+  String? recordsRange;
 
-  Pages({this.total, this.page, this.lastPage});
+  Pages({this.total, this.page, this.lastPage, this.recordsRange});
 
   Pages.fromJson(Map<String, dynamic> json) {
     total = json['total'];
     page = json['page'];
     lastPage = json['last_page'];
+    recordsRange = json['records_range'];
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +102,7 @@ class Pages {
     data['total'] = this.total;
     data['page'] = this.page;
     data['last_page'] = this.lastPage;
+    data['records_range'] = this.recordsRange;
     return data;
   }
 }

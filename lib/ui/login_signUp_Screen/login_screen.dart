@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:faculty_app/blocs/auth_bloc.dart';
-import 'package:faculty_app/models/signup_response.dart';
+import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
@@ -14,6 +14,7 @@ import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -56,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: MediaQuery
                       .of(context)
                       .size
-                      .height * 0.1,
+                      .height * 0.07,
                 ),
                 Image.asset(
                   "assets/images/logo2-white.png",
@@ -87,8 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Center(
                             child: Text(
                               "LOGIN",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 30,fontFamily: 'Inter',),
+                              style: GoogleFonts.aladin(fontSize: 30),
                             )),
                         SizedBox(
                           height: 15,
@@ -177,32 +177,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text("LOGIN")),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20, left: 50),
-                          child: Row(
-                            children: [
-                              Text(
-                                "Create your account ",
-                                style: TextStyle(fontWeight: FontWeight.bold,
-                                    fontSize: 15),
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.004,
-                              ),
-                              TextButton(
-                                  child: Text(
-                                    "Sign Up",
-                                    style:
-                                    TextStyle(fontWeight: FontWeight.bold,
-                                        fontSize: 15,color: primaryColor,
-                                      decoration: TextDecoration.underline,
-                                    ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Create your account ",
+                              style: TextStyle(fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.004,
+                            ),
+                            TextButton(
+                                child: Text(
+                                  "Sign Up",
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold,
+                                      fontSize: 15,color: primaryColor,
+                                    decoration: TextDecoration.underline,
                                   ),
-                                  onPressed: () {
-                                    Get.to(SignUpScreen());
-                                  }),
-                            ],
-                          ),
+                                ),
+                                onPressed: () {
+                                  Get.to(SignUpScreen());
+                                }),
+                          ],
                         ),
                       ],
                     ),

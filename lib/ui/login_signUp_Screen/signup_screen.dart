@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:faculty_app/blocs/auth_bloc.dart';
-import 'package:faculty_app/models/common_response.dart';
-import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
+import 'package:faculty_app/models/register_response.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/payment_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';
@@ -305,12 +304,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     body["city"] = college_city;
     body["state"] = selectedState;
     try {
-      CommonResponse response =
+      RegisterResponse response =
       await _authBloc!.userRegistration(json.encode(body));
       Get.back();
       if (response.success!) {
-        Get.to(LoginScreen());
-        showAlert(context,"${response.message}");
+        // Get.to(LoginScreen());
+        Get.to(PaymentScreen(imageUrl:"${response.qrCode}",id:response.collegeId.toString()));
+        // showAlert(context,"${response.message}");
       } else {
         toastMessage('${response.message!}');
       }

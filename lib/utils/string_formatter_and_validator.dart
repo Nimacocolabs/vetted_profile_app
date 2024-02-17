@@ -11,6 +11,8 @@ class FormatAndValidate {
   static final RegExp _addressRegExp = RegExp(r'^[a-zA-Z0-9\.\-\s\,\/]+$');
   static final RegExp _dobRegExp =
   RegExp('^(19|20)\d\d([- /.])(0[1-9]|1[012])\2(0[1-9]|[12][0-9]|3[01])');
+  static final RegExp _transactionIdRegExp =
+  RegExp(r'^[a-zA-Z0-9]{10,30}$');
 
   formatName() {
     return [FilteringTextInputFormatter.allow(_alphaRegExp)];
@@ -79,6 +81,14 @@ class FormatAndValidate {
       LengthLimitingTextInputFormatter(6)
     ];
   }
+
+  formatTransactionId() {
+    return [
+      LengthLimitingTextInputFormatter(30),
+      LengthLimitingTextInputFormatter(10),
+    ];
+  }
+
   validateNumber(value) {
     return value!.isEmpty || value.length > 8 ||
         value.length < 4
@@ -116,6 +126,7 @@ class FormatAndValidate {
         ? "Enter valid year"
         : null;
   }
+
 
   validateAadhaar(value) {
     return value!.isEmpty ||
@@ -203,6 +214,12 @@ class FormatAndValidate {
       return 'Please provide a valid Google Meet link';
     }
     return null;
+  }
+
+  validateTransactionId(value) {
+    return value.isEmpty || value.length < 10 || value.length > 30
+        ? "Transaction ID must be between 10 and 30 characters"
+        : null;
   }
 
 

@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:faculty_app/blocs/admin/admin_scheduled_bloc.dart';
 import 'package:faculty_app/models/admin/deatils_reponse.dart';
 import 'package:faculty_app/models/admin/scheduled_list_response.dart';
+import 'package:faculty_app/models/common_response.dart';
+import 'package:faculty_app/ui/committe/committe_home_screen.dart';
 import 'package:faculty_app/ui/committe/update_invite_screen.dart';
 import 'package:faculty_app/utils/user.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:get/get.dart';
@@ -22,11 +27,14 @@ class ViewScheduleScreen extends StatefulWidget {
 
 class _ViewScheduleScreenState extends State<ViewScheduleScreen>
     with TickerProviderStateMixin {
+
+  final AdminScheduleBloc _bloc = AdminScheduleBloc();
   late AnimationController _controller;
   List<Jurours> jurorsData = [];
   List<Verdicts> verdictData = [];
   late Future<void> _fetchJuryDetailsFuture;
   Verdict? verdict;
+  String? judgement;
   Future<void> _fetchJuryDetails() async {
     try {
       final response = await http.get(
@@ -80,7 +88,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _fetchJuryDetailsFuture = _fetchJuryDetails();
   }
 
@@ -93,25 +101,22 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
   TabController? _tabController;
   static const List<Tab> _tabs = [
     Tab(
-      icon: Text("Job Details"),
+      icon: Text("Job & Personal"),
     ),
     Tab(
-      icon: Text("Personal Details"),
+      icon: Text("complaint "),
     ),
     Tab(
-      icon: Text("complaint Details"),
+      icon: Text("Hearing "),
     ),
     Tab(
-      icon: Text("Hearing Details"),
-    ),
-    Tab(
-      icon: Text("Jurours Details"),
+      icon: Text("Jurours"),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // print("fv${DateTime.now().isAfter(DateTime.parse("2024-02-11"))}");
+    print("Status-->${widget.details.status}");
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -126,7 +131,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: BackButton(color: Colors.white),
-        title: const Text("View", style: TextStyle(color: Colors.white)),
+        title: const Text("", style: TextStyle(color: Colors.white)),
       ),
       body: SafeArea(
         child: Padding(
@@ -186,6 +191,27 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
                                   ),
                                   child: Text("View Judgements")),
                             ),
+                          SizedBox(width: 10,),
+                          if(UserDetails.userRole == "admin" && verdictData
+                              .isNotEmpty &&  widget.details.status != "resolved" && widget.details.status != "rejected" )
+                            Align(
+                              alignment: AlignmentDirectional.bottomEnd,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    Get.to(UpdateInviteScreen(
+                                        id: widget.details.id.toString(),
+                                        date: widget.details.scheduledDate
+                                            .toString(),
+                                        time: widget.details.scheduledTime
+                                            .toString(),
+                                        link: widget.details.meetingLink
+                                            .toString()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: primaryColor,
+                                  ),
+                                  child: Text("Final Judgement")),
+                            ),
                         ],
                       ),
                       SizedBox(
@@ -206,13 +232,12 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.6,
+                          height: MediaQuery.of(context).size.height * 1,
                           width: MediaQuery.of(context).size.width - 2,
                           child: TabBarView(
                             controller: _tabController,
                             children: <Widget>[
                               _buildJobDetailsTab(),
-                              _buildPersonalDetailsTab(),
                               _buildComplaintDetailsTab(),
                               _buildHearingsDetailsTab(),
                               _buildJuryDetailsTab()
@@ -237,23 +262,13 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SectionTitle("Job Details"),
           DetailsTile("Job Title", widget.details.subject),
           DetailsTile("Department", widget.details.department),
           DetailsTile("Name", widget.details.collegeName),
           DetailsTile("Phone", widget.details.collegePhone),
           DetailsTile("Email", widget.details.collegeEmail),
           DetailsTile("Address", widget.details.collegeAddress),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
           SectionTitle("Personal Details"),
           DetailsTile("Name", widget.details.name),
           DetailsTile("Email", widget.details.email),
@@ -265,6 +280,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
       ),
     );
   }
+
 
   Widget _buildComplaintDetailsTab() {
     return Padding(
@@ -462,4 +478,5 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
       },
     );
   }
+
 }

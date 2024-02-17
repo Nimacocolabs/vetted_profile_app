@@ -70,7 +70,7 @@ class _AppTextBoxState extends State<AppTextBox> {
   Widget build(BuildContext context) {
     if (widget.suffixIcon == null && obscureText) {
       suffixIcon = IconButton(
-          icon: Icon(b ? Icons.visibility_off : Icons.visibility),
+          icon: Icon(b ? Icons.visibility_off : Icons.visibility,color: primaryColor,),
           onPressed: () {
             setState(() {
               b = !b;

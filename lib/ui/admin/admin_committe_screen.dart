@@ -53,7 +53,6 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
         !_itemsScrollController.position.outOfRange) {
       print("reach the bottom");
       paginate();
-      //}
     }
     if (_itemsScrollController.offset <=
         _itemsScrollController.position.minScrollExtent &&
@@ -67,7 +66,11 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
           .where((committee) =>
       committee.name!.toLowerCase().contains(query.toLowerCase()) ||
           committee.email!.toLowerCase().contains(query.toLowerCase()) ||
-          committee.phone!.toLowerCase().contains(query.toLowerCase()))
+          committee.phone!.toLowerCase().contains(query.toLowerCase())||
+          (committee.state != null &&
+              committee.state!.toLowerCase().contains(query.toLowerCase())) ||
+          (committee.languages != null &&
+              committee.languages!.toLowerCase().contains(query.toLowerCase())))
           .toList();
     });
   }
@@ -137,8 +140,9 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           CommitteeListResponse resp = snapshot.data!.data;
-                          return  filteredCommitteeList.isEmpty &&
-                              searchController.text.isNotEmpty
+                          List<Committee> committeeList = _bloc.committeeList;
+                          return (committeeList.isEmpty) ||
+                              (filteredCommitteeList.isEmpty && searchController.text.isNotEmpty)
                               ? CommonApiResultsEmptyWidget("No records found")
 
                     : _buildCommitteList(filteredCommitteeList.isNotEmpty
@@ -242,6 +246,28 @@ class _AdminCommiteeScreenState extends State<AdminCommiteeScreen> with LoadMore
                   SizedBox(
                     height: 5,
                   ),
+                  if(committeeList[index].state != null)
+                  Text(
+                    "${committeeList[index].state}",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),SizedBox(
+                    height: 5,
+                  ),
+                  if(committeeList[index].languages != null)
+                    Text(
+                      "Languages : ${committeeList[index].languages}",
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [

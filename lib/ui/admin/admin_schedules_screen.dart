@@ -138,9 +138,11 @@ class _AdminScheduleScreenState extends State<AdminScheduleScreen> with LoadMore
                           return CommonApiLoader();
                         case Status.COMPLETED:
                           ScheduledListResponse resp = snapshot.data!.data;
-                          return filteredComplaintsList.isEmpty &&
-                              searchController.text.isNotEmpty
-                              ? CommonApiResultsEmptyWidget("No records found")
+
+                          List<Hearings> complaintsList = _bloc.complaintList;
+                          return (complaintsList.isEmpty) ||
+                              (filteredComplaintsList.isEmpty && searchController.text.isNotEmpty)
+                            ? CommonApiResultsEmptyWidget("No records found")
                               : _buildComplaintList(filteredComplaintsList.isNotEmpty
                               ? filteredComplaintsList
                               : _bloc.complaintList);
