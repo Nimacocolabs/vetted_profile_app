@@ -139,7 +139,6 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("State-->${widget.details.state}");
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(

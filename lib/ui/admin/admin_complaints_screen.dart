@@ -174,7 +174,6 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen> with Load
         physics: NeverScrollableScrollPhysics(),
         itemCount: complaintsList.length, // Replace with the actual number of complaints
         itemBuilder: (context, index) {
-          print("Length-->${complaintsList.length}");
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: ListTile(

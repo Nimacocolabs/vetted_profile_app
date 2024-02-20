@@ -57,6 +57,13 @@ class AuthRepository {
     }
   }
 
+  Future<CommonResponse> forgotPassword(String body) async {
+    final response = await apiClient!.getJsonInstance().post(
+        '${Apis.forgotPassword}',
+        data: body);
+    return CommonResponse.fromJson(response.data);
+  }
+
   Future<CommonResponse> addPayment(String id,
       String body) async {
     Response response = await apiClient!

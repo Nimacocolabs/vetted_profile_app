@@ -30,6 +30,17 @@ class AuthBloc {
       throw e;
     }
   }
+
+  Future<CommonResponse> forgotPassword(String body) async {
+    try {
+      return await _authRepository!.forgotPassword(body);
+    } catch (e, s) {
+      Completer().completeError(e, s);
+      throw e;
+    }
+  }
+
+
   Future<CommonResponse> addPayment( String id,
       String body,
       ) async {

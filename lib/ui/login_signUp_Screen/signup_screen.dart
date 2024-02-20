@@ -309,6 +309,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       Get.back();
       if (response.success!) {
         // Get.to(LoginScreen());
+        toastMessage('College registered successfully!');
         Get.to(PaymentScreen(imageUrl:"${response.qrCode}",id:response.collegeId.toString()));
         // showAlert(context,"${response.message}");
       } else {

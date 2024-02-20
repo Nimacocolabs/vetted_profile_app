@@ -21,7 +21,7 @@
         </intent>
     </queries>
    <application
-        android:label="FOCS"
+        android:label="Faculty Check"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

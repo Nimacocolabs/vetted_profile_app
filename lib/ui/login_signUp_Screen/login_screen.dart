@@ -60,11 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       .height * 0.07,
                 ),
                 Image.asset(
-                  "assets/images/logo2-white.png",
+                  "assets/images/logo2-full-white.png",
                   height: 150,
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
                 Card(
                   child: Container(
@@ -241,7 +241,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       LoginSignupResponse response = await _authBloc.login(json.encode(body));
       Get.back();
-      print("Role--->${response.user!.role}");
       if (response.success!) {
         await SharedPrefs.logIn(response);
         if (response.user!.role == "admin") {
@@ -268,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
         toastMessage(error.email);
       } else {
         Get.back();
-        toastMessage('Please enter valid email and password');
+        toastMessage('No account registered with this email!...Please enter valid credentials');
       }
     }
   }

@@ -148,6 +148,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       CommonResponse response = await _bloc.changePassword(json.encode(body));
       Get.back();
       toastMessage('${response.message!}');
+      Get.offAll(() => ProfileScreenUser());
     } catch (e, s) {
       Completer().completeError(e, s);
       Get.back();

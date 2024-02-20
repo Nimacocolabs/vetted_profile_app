@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/network/api_provider.dart';
 import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
@@ -13,7 +16,8 @@ import '../../network/apis.dart';
 class ForgotPasswordScreen extends StatelessWidget {
   ForgotPasswordScreen({super.key});
 
-  ApiProvider apiProvider = ApiProvider();
+  AuthBloc _authBloc = AuthBloc();
+
   final TextFieldControl _email = TextFieldControl();
 
   @override
@@ -82,18 +86,27 @@ class ForgotPasswordScreen extends StatelessWidget {
     if (formatAndValidate.validateEmailID(email) != null) {
       return toastMessage(formatAndValidate.validateEmailID(email));
     }
-    CommonResponse response = await forgotPassword();
-    return showAlert(context,response.message!);
+    return _forgotPassword(context,email);
   }
 
-  Future<CommonResponse> forgotPassword() async {
+  Future _forgotPassword(context,String email) async {
     AppDialogs.loading();
-    final response = await apiProvider.getJsonInstance().post(
-        '${Apis.forgotPassword}',
-        data: {"email": _email.controller.text});
-    Get.back();
-    return CommonResponse.fromJson(response.data);
+    Map<String, dynamic> body = {};
+    body["email"] = email;
+    try {
+      CommonResponse response = await _authBloc.forgotPassword(json.encode(body));
+      Get.back();
+      if (response.success!) {
+        showAlert(context,response.message!);
+      } else {
+        toastMessage(response.message ?? '');
+      }
+    } catch (error) {
+        Get.back();
+        toastMessage('No account registered with this email!...Please enter registered email');
+    }
   }
+
 
   void showAlert(BuildContext context, String message) {
     showDialog(

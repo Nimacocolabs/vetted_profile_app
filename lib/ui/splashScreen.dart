@@ -77,24 +77,28 @@ class _SplashScreenState extends State<SplashScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height:MediaQuery.of(context).size.height *0.4,),
-                      Text(
-                        "Faculty online",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: 'Inter',
-                        ),
+                      Image.asset(
+                        "assets/images/logo2-full-white.png",
+                        height: 150,
                       ),
-                      Text(
-                        "credential system",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontFamily: 'Inter',
-                        ),
-                      ),
+                      // Text(
+                      //   "Faculty Check",
+                      //   style: TextStyle(
+                      //     fontSize: 30,
+                      //     fontWeight: FontWeight.bold,
+                      //     color: Colors.white,
+                      //     fontFamily: 'Inter',
+                      //   ),
+                      // ),
+                      // Text(
+                      //   "credential system",
+                      //   style: TextStyle(
+                      //     fontSize: 30,
+                      //     fontWeight: FontWeight.bold,
+                      //     color: Colors.white,
+                      //     fontFamily: 'Inter',
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
