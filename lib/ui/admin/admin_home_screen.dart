@@ -177,12 +177,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 10),
-                        Row(
+                        _isLoading
+                            ? Center(child: CircularProgressIndicator()) : Row(
                           children: [
                             Expanded(
-                              child: _isLoading
-                                  ? Center(child: CircularProgressIndicator()) // Show loading indicator
-                                  : AdminInfoCard(
+                              child: AdminInfoCard(
                                 title: "Colleges",
                                 pending: _collegesPending.toString(),
                                 approved: _collegesApproved.toString(),
@@ -190,9 +189,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                             ),
                             Expanded(
-                              child: _isLoading
-                                  ? Center(child: CircularProgressIndicator()) // Show loading indicator
-                                  : AdminInfoCard(
+                              child: AdminInfoCard(
                                 title: "Profiles",
                                 claimed: _profilesClaimed.toString(),
                                 registered: _profilesRegistered.toString(),
@@ -201,17 +198,16 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             ),
                           ],
                         ),
-                        Row(
+                        _isLoading
+                            ? Center(child: CircularProgressIndicator()) : Row(
                           children: [
                             Expanded(
-                              child: _isLoading
-                                  ? Center(child: CircularProgressIndicator()) // Show loading indicator
-                                  : AdminInfoCard(
+                              child: AdminInfoCard(
                                 title: "Committee",
                                 committee: _committeeCount.toString(),
                               ),
                             ),
-                            // Add more AdminInfoCard widgets in additional Expanded widgets as needed
+
                           ],
                         ),
                         Container(

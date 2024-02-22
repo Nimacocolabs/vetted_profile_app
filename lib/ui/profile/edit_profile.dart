@@ -5,6 +5,7 @@ import 'package:faculty_app/blocs/profile_bloc.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/profile/profile_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -258,6 +259,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _updateFunction() async {
+    AppDialogs.loading();
     var formData = FormData();
     if (image != null) {
       String fileName = imageTemp?.path?.split('/')?.last ?? "";

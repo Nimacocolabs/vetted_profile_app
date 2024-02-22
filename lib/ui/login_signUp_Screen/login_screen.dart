@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
@@ -15,6 +16,8 @@ import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 
 class LoginScreen extends StatefulWidget {
@@ -31,6 +34,15 @@ class _LoginScreenState extends State<LoginScreen> {
   var _lkey = new GlobalKey<FormState>();
   TextFieldControl _email = TextFieldControl();
   TextFieldControl _password = TextFieldControl();
+  final String _youtubeUrl = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID';
+
+  Future<void> _launchURL(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +81,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 Card(
                   child: Container(
                     height: MediaQuery
-                      .of(context)
-                      .size
-                      .height* 0.58,
+                        .of(context)
+                        .size
+                        .height * 0.62,
                     width: MediaQuery
                         .of(context)
                         .size
-                        .width* 0.85,
+                        .width * 0.85,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -83,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height:10,
+                          height: 10,
                         ),
                         Center(
                             child: Text(
@@ -108,7 +120,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             right: 20,
                             bottom: 5,
                           ),
-                          child: Text("Email",style: TextStyle(fontWeight: FontWeight.w500),),
+                          child: Text("Email",
+                            style: TextStyle(fontWeight: FontWeight.w500),),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
@@ -118,7 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: AppTextBox(
                             textFieldControl: _email,
-                            prefixIcon: Icon(Icons.email_outlined,color: primaryColor,),
+                            prefixIcon: Icon(
+                              Icons.email_outlined, color: primaryColor,),
                             hintText: 'Email',
                             keyboardType: TextInputType.emailAddress,
                           ),
@@ -129,7 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             right: 20,
                             bottom: 5,
                           ),
-                          child: Text("Password",style: TextStyle(fontWeight: FontWeight.w500),),
+                          child: Text("Password",
+                            style: TextStyle(fontWeight: FontWeight.w500),),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
@@ -138,7 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: AppTextBox(
                             textFieldControl: _password,
-                            prefixIcon: Icon(Icons.lock_outlined,color: primaryColor,),
+                            prefixIcon: Icon(
+                              Icons.lock_outlined, color: primaryColor,),
                             hintText: 'Password',
                             obscureText: true,
                             textInputAction: TextInputAction.done,
@@ -162,11 +178,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: MediaQuery
                                 .of(context)
                                 .size
-                                .height* 0.054,
+                                .height * 0.054,
                             width: MediaQuery
                                 .of(context)
                                 .size
-                                .width* 0.23,
+                                .width * 0.23,
                             child: ElevatedButton(
                                 style: ButtonStyle(
                                     backgroundColor:
@@ -186,19 +202,67 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontSize: 15),
                             ),
                             SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.004,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.004,
                             ),
                             TextButton(
                                 child: Text(
                                   "Sign Up",
                                   style:
                                   TextStyle(fontWeight: FontWeight.bold,
-                                      fontSize: 15,color: primaryColor,
+                                    fontSize: 15, color: primaryColor,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
                                 onPressed: () {
                                   Get.to(SignUpScreen());
+                                }),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Video Help?",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.002,
+                            ),
+                            TextButton(
+                                child: Text(
+                                  "Malayalam",
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold,
+                                    fontSize: 15, color: primaryColor,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  launchUrl(
+                                      Uri.parse("https://youtu.be/5Sc2X0b0T6g"),
+                                      mode: LaunchMode.externalApplication);
+                                }),
+                            Text(
+                              "Or",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextButton(
+                                child: Text(
+                                  "English",
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold,
+                                    fontSize: 15, color: primaryColor,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  launchUrl(
+                                      Uri.parse("https://youtu.be/RVFQ7SEwM8k"),
+                                      mode: LaunchMode.externalApplication);
                                 }),
                           ],
                         ),
@@ -233,43 +297,94 @@ class _LoginScreenState extends State<LoginScreen> {
     return await _login(email, password);
   }
 
-  Future _login(String email, String password) async {
+// Future _login(String email, String password) async {
+//   AppDialogs.loading();
+//   Map<String, dynamic> body = {};
+//   body["email"] = email;
+//   body["password"] = password;
+//   try {
+//     LoginSignupResponse response = await _authBloc.login(json.encode(body));
+//     Get.back();
+//     if (response.success!) {
+//       await SharedPrefs.logIn(response);
+//       if (response.user!.role == "admin") {
+//         Get.offAll(() => AdminHomeScreen());
+//       } else if (response.user!.role == "college") {
+//         Get.offAll(() => CollegeHomeScreen());
+//       } else {
+//         Get.offAll(() => CommitteHomeScreen());
+//       }
+//     } else if (response.status == 422) {
+//       if (response.errors != null) {
+//         if (response.errors!.email != null &&
+//             response.errors!.email!.isNotEmpty) {
+//           toastMessage(response.errors!.email![0] ?? 'Unknown email error');
+//         }
+//       } else {
+//         toastMessage(response.message ?? '');
+//       }
+//     } else {
+//       toastMessage(response.message ?? '');
+//     }
+//   } catch (error) {
+//     if (error is Errors) {
+//       toastMessage(error.email);
+//     } else {
+//       Get.back();
+//       toastMessage('Please enter valid credentials');
+//     }
+//   }
+// }
+
+  Future<void> _login(String email, String password) async {
     AppDialogs.loading();
     Map<String, dynamic> body = {};
     body["email"] = email;
     body["password"] = password;
+
     try {
-      LoginSignupResponse response = await _authBloc.login(json.encode(body));
+      final response = await http.post(
+        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/login'),
+        body: body,
+      );
+
       Get.back();
-      if (response.success!) {
-        await SharedPrefs.logIn(response);
-        if (response.user!.role == "admin") {
-          Get.offAll(() => AdminHomeScreen());
-        } else if (response.user!.role == "college") {
-          Get.offAll(() => CollegeHomeScreen());
-        } else {
-          Get.offAll(() => CommitteHomeScreen());
-        }
-      } else if (response.status == 422) {
-        if (response.errors != null) {
-          if (response.errors!.email != null &&
-              response.errors!.email!.isNotEmpty) {
-            toastMessage(response.errors!.email![0] ?? 'Unknown email error');
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        LoginSignupResponse loginResponse = LoginSignupResponse.fromJson(jsonResponse);
+        if (loginResponse.success!) {
+          await SharedPrefs.logIn(loginResponse);
+          if (loginResponse.user!.role == "admin") {
+            Get.offAll(() => AdminHomeScreen());
+          } else if (loginResponse.user!.role == "college") {
+            Get.offAll(() => CollegeHomeScreen());
+          } else {
+            Get.offAll(() => CommitteHomeScreen());
           }
         } else {
-          toastMessage(response.message ?? '');
+          if (response.statusCode == 200) {
+            toastMessage('You are not authorized!');
+          } else {
+            toastMessage(loginResponse.message ?? '');
+          }
+        }
+      } else if (response.statusCode == 422) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse.containsKey('errors')) {
+          final errors = jsonResponse['errors'];
+          if (errors.containsKey('email')) {
+            toastMessage(errors['email'][0]);
+          }
+        } else {
+          toastMessage('Validation errors: ${jsonResponse['message']}');
         }
       } else {
-        toastMessage(response.message ?? '');
+        toastMessage('${json.decode(response.body)['message']}');
       }
     } catch (error) {
-      if (error is Errors) {
-        toastMessage(error.email);
-      } else {
-        Get.back();
-        toastMessage('No account registered with this email!...Please enter valid credentials');
-      }
+      Get.back();
+      toastMessage('Failed to login: $error');
     }
   }
-  }
 
+}

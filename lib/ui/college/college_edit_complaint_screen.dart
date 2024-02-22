@@ -9,6 +9,7 @@ import 'package:faculty_app/models/college/update_complaint_response.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
@@ -413,6 +414,7 @@ class _EditComplaintScreenState extends State<EditComplaintScreen> {
       String details,
       String pancardnumber,
       ) async {
+    AppDialogs.loading();
     var formData = FormData();
     if (_selectedImage != null) {
       String fileName = _selectedImage?.path

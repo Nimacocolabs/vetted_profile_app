@@ -9,6 +9,7 @@ import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class PaymentScreen extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PaymentScreenState extends State<PaymentScreen>  {
   AuthBloc? _authBloc;
   TextEditingController transactionIdController = TextEditingController();
   FormatAndValidate formatAndValidate = FormatAndValidate();
+  String mail="support@facultycheck.com";
   @override
   void initState() {
     _authBloc = AuthBloc();
@@ -58,9 +60,9 @@ class _PaymentScreenState extends State<PaymentScreen>  {
           padding: const EdgeInsets.all(10.0),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10),
-                if (widget.imageUrl != null)
                   Container(
                     height: 300,
                     decoration: BoxDecoration(
@@ -71,8 +73,10 @@ class _PaymentScreenState extends State<PaymentScreen>  {
                     ),
                   ),
                 SizedBox(height: 15,),
-                Text("After Payment enter transaction id"),
-                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10,right: 10),
+                  child: Text("After Payment enter transaction id"),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
@@ -106,6 +110,28 @@ class _PaymentScreenState extends State<PaymentScreen>  {
                         ),
                       )),
                 ),
+                SizedBox(height: 6,),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10,right: 10),
+                  child: Text("After making the payment, please send a screenshot of the payment confirmation to",
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,fontSize: 15),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10,right: 10),
+                  child: InkWell(
+                    onTap: ()=> launch("mailto:$mail"),
+                    child: Text(mail,
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 20,),
                 Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.3,
@@ -119,7 +145,7 @@ class _PaymentScreenState extends State<PaymentScreen>  {
                     ),
                   ),
                 ),
-               SizedBox(height: MediaQuery.of(context).size.height *0.17,),
+               SizedBox(height: MediaQuery.of(context).size.height *0.07,),
                 Align(
                   alignment: AlignmentDirectional.bottomEnd,
                   child: SizedBox(

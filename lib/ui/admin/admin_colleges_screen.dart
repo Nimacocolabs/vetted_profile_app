@@ -276,22 +276,27 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                       ),
                     ),
                   ),
-                  if (collegeList[index].paymentStatus == "paid")
-                    Row(
-                      children: [
-                          ElevatedButton(
-                            onPressed: () async {
-                              await _bloc.acceptOrRejectCollege(
-                                  'approved', collegeList[index].id.toString());
-                              await Future.delayed(Duration(seconds: 2));
-                              await _bloc.getCollegeList(false);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.green,
-                            ),
-                            child: Text("Approve"),
+                  Row(
+                    children: [
+                      if (collegeList[index].paymentStatus == "paid" && collegeList[index].status == "pending" ||
+                          collegeList[index].status == "rejected" )
+                        ElevatedButton(
+                          onPressed: () async {
+                            await _bloc.acceptOrRejectCollege(
+                                'approved', collegeList[index].id.toString());
+                            await Future.delayed(Duration(seconds: 2));
+                            await _bloc.getCollegeList(false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.green,
                           ),
-                        SizedBox(width: 15),
+                          child: Text("Approve"),
+                        ),
+                      SizedBox(width: 10,),
+                      if (collegeList[index].paymentStatus == "unpaid" ||
+                          collegeList[index].paymentStatus == "paid" && collegeList[index].status == "pending" ||
+                          collegeList[index].status == "approved" )
+                        SizedBox(width: 10,),
                         ElevatedButton(
                           onPressed: () async {
                             await _bloc.acceptOrRejectCollege(
@@ -304,48 +309,12 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                           ),
                           child: Text("Reject"),
                         ),
-                        Spacer(),
-                        IconButton(
-                          onPressed: () async {
-                            _showDeleteConfirmationDialog(
-                                context, collegeList[index].id.toString());
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                          ),
-                          icon: Icon(
-                            Icons.delete_outline,
-                            color: Colors.red,
-                          ),
-                        ),
-                        SizedBox(width: 20),
-                        // Display status dynamically
-                      ],
-                    ),
-                  if (collegeList[index].paymentStatus == "unpaid")
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          await _bloc.acceptOrRejectCollege(
-                              'rejected', collegeList[index].id.toString());
-                          await Future.delayed(Duration(seconds: 2));
-                          await _bloc.getCollegeList(false);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                        ),
-                        child: Text("Reject"),
-                      ),
                       Spacer(),
                       IconButton(
                         onPressed: () async {
                           _showDeleteConfirmationDialog(
                               context, collegeList[index].id.toString());
                         },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                        ),
                         icon: Icon(
                           Icons.delete_outline,
                           color: Colors.red,
@@ -355,6 +324,7 @@ class _AdminCollegeScreenState extends State<AdminCollegeScreen>
                       // Display status dynamically
                     ],
                   ),
+
                 ],
               ),
             ),

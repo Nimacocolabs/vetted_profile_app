@@ -7,6 +7,7 @@ import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/user.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_time_picker_spinner/flutter_time_picker_spinner.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -373,14 +374,12 @@ class _ComplaintScheduleScreenState extends State<ComplaintScheduleScreen> {
     );
 
   }
-
-
   Future _schedule(
       String date,
       String time,
       String link,
       ) async {
-
+    AppDialogs.loading();
     _bloc!.schedule(widget.id,DateFormat('HH:mm').format(_sheduleTime!),date,link,selectedOptionsIds).then((value) {
       Get.back();
       CommonResponse response = value;

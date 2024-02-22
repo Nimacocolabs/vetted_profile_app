@@ -42,6 +42,7 @@ class Committee {
   String? image;
   String? languages;
   String? state;
+  String? description;
   String? imageUrl;
 
   Committee(
@@ -53,6 +54,7 @@ class Committee {
         this.image,
         this.languages,
         this.state,
+        this.description,
         this.imageUrl});
 
   Committee.fromJson(Map<String, dynamic> json) {
@@ -64,6 +66,7 @@ class Committee {
     image = json['image'];
     languages = json['languages'];
     state = json['state'];
+    description = json['description'];
     imageUrl = json['image_url'];
   }
 
@@ -77,6 +80,7 @@ class Committee {
     data['image'] = this.image;
     data['languages'] = this.languages;
     data['state'] = this.state;
+    data['description'] = this.description;
     data['image_url'] = this.imageUrl;
     return data;
   }

@@ -6,6 +6,7 @@ import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,34 +91,69 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 8,),
-                Text(
-                  "Name",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Name",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                   textFieldControl: _name,
                   hintText: 'Enter name',
                 ),
-                Text(
-                  "Email address",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Email address",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                   textFieldControl: _email,
                   hintText: 'Enter mail address',
                   keyboardType: TextInputType.emailAddress,
                 ),
-                Text(
-                  "Address",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Address",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _address,
                     hintText: 'Enter address',
                     keyboardType: TextInputType.streetAddress),
-                Text(
-                  "Phone number",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Phone number",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                   textFieldControl: _phone,
@@ -132,33 +168,69 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
                     textFieldControl: _pancardnumber,
                     hintText: 'Enter pan card number',
                     keyboardType: TextInputType.text),
-                Text(
-                  "Aadhar card number",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Aadhar card number",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _adharcardnumber,
                     hintText: 'Enter Aadhaar card number',
                     keyboardType: TextInputType.number),
-                Text(
-                  "Job Position",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Job Position",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _jobTitle,
                     hintText: 'Enter job position ',
                     keyboardType: TextInputType.text),
-                Text(
-                  "Department",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Department",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _department,
                     hintText: 'Enter department',
                     keyboardType: TextInputType.text ),
-                Text(
-                  "Intensity of Complaint",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Intensity of Complaint",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,9 +308,18 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
                   ),
                 ),
                 SizedBox(height: 6,),
-                Text(
-                  "Nature of the Complaint",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Nature of the Complaint",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _nature,
@@ -368,6 +449,7 @@ class _AddComplaintScreenState extends State<AddComplaintScreen> {
       String details,
       String pancardnumber,
       ) async {
+    AppDialogs.loading();
     var formData = FormData();
     if (_selectedImage != null) {
       String fileName = _selectedImage?.path

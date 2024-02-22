@@ -10,6 +10,7 @@ import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/utils/user.dart';
+import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,6 @@ class EditCommitteScreen extends StatefulWidget {
 
 class _EditCommitteScreenState extends State<EditCommitteScreen> {
   AdminCommitteBloc? _bloc;
-  String description="";
   TextFieldControl _name = TextFieldControl();
   TextFieldControl _email = TextFieldControl();
   TextFieldControl _phoneNumber = TextFieldControl();
@@ -80,11 +80,14 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
   @override
   void initState() {
     _bloc = AdminCommitteBloc();
-    _fetchDetails();
     _name.controller.text = widget.details.name!;
     _email.controller.text = widget.details.email!;
     _phoneNumber.controller.text = widget.details.phone!;
     _alterphoneNumber.controller.text = widget.details.phone2!;
+    if (widget.details.description != null && widget.details.description!.isNotEmpty) {
+      _detailed.controller.text = widget.details.description!;
+    }
+
     if (widget.details.languages != null && widget.details.languages!.isNotEmpty) {
       _languages.controller.text = widget.details.languages!;
     }
@@ -97,31 +100,7 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
     super.initState();
   }
 
-  Future<void> _fetchDetails() async {
-    await Future.delayed(Duration(seconds: 1));
-    try {
-      final response = await http.get(
-        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/admin/committee/${widget.details.id}/edit'),
-        headers: {
-          'Authorization': 'Bearer ${UserDetails.apiToken}',
-          'Accept': 'application/json',
-        },
-      );
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        final details = jsonResponse['data'];
-        setState(() {
-          description = details['description'];
-          _detailed.controller.text = description;
-          // Set loading to false once data is fetched
-        });
-      } else {
-        print('Failed to fetch dashboard details: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error fetching dashboard details: $error');
-    }
-  }
+
 
 
   File? _selectedImage;
@@ -407,7 +386,7 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
       String languages,
       String selectedState
       ) async {
-
+    AppDialogs.loading();
     var formData = FormData();
     if (_selectedImage != null) {
       String fileName = _selectedImage?.path

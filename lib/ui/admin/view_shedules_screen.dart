@@ -116,7 +116,6 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
 
   @override
   Widget build(BuildContext context) {
-    print("Status-->${widget.details.status}");
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -232,7 +231,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 1,
+                          height: MediaQuery.of(context).size.height * 0.7,
                           width: MediaQuery.of(context).size.width - 2,
                           child: TabBarView(
                             controller: _tabController,
@@ -325,23 +324,31 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
   }
 
   Widget _buildJuryDetailsTab() {
-    return ListView.builder(
-      itemCount: jurorsData.length,
-      itemBuilder: (context, index) {
-        var juror = jurorsData[index];
-        return ListTile(
-          title: Text(juror.name ?? 'No Name'),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Text(juror.email ?? 'No Email'),
-              juror.description!=null? Text(juror.description ?? ''):SizedBox()
-            ],
-          ),
-        );
-      },
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: jurorsData.map((juror) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ListTile(
+              title: Text(juror.name ?? 'No Name'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (juror.description != null)
+                    Text(
+                      juror.description ?? '',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
+
 
   Widget SectionTitle(String title) {
     return Padding(

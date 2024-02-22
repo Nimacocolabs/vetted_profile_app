@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:faculty_app/blocs/profile_bloc.dart';
 import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/ui/profile/profile_screen.dart';

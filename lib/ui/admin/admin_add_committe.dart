@@ -120,25 +120,52 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 8,),
-                Text(
-                  "Name",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Name",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _name,
                     hintText: 'Enter name',
                     keyboardType: TextInputType.name),
-                Text(
-                  "Email",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Email",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _email,
                     hintText: 'Enter email',
                     keyboardType: TextInputType.emailAddress ),
-                Text(
-                  "Contact Number",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "Contact Number",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 AppTextBox(
                     textFieldControl: _phoneNumber,
@@ -153,9 +180,19 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
                     hintText: 'Enter phone number',
                     keyboardType: TextInputType.phone ),
                 SizedBox(height: 4,),
-                Text(
-                  "languages",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "languages",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+
+                  ],
                 ),
                 Container(
                     margin: EdgeInsets.symmetric(vertical: 8),
@@ -190,9 +227,17 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
                       ),
                     )),
                 SizedBox(height: 4,),
-                Text(
-                  "State",
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                Row(
+                  children: [
+                    Text(
+                      "State",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),SizedBox(width: 5,),
+                    Text(
+                      "*",
+                      style: TextStyle(fontWeight: FontWeight.w500,color: Colors.red),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 5,),
                 Container(
@@ -340,6 +385,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
       String selectedState,
       String languages,
       ) async {
+    AppDialogs.loading();
     var formData = FormData();
     if (image != null) {
       String fileName = image?.path?.split('/')?.last ?? "";
