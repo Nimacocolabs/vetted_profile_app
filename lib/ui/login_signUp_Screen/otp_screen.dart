@@ -18,7 +18,8 @@ import 'package:http/http.dart' as http;
 class OtpScreen extends StatefulWidget {
   final String deviceId;
   final String userId;
-  const OtpScreen({Key? key,required this.deviceId,required this.userId}) : super(key: key);
+  final String msg;
+  const OtpScreen({Key? key,required this.deviceId,required this.userId,required this.msg}) : super(key: key);
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
@@ -54,6 +55,14 @@ class _OtpScreenState extends State<OtpScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 10,),
+              Padding(
+                padding:  EdgeInsets.only(left: 8,right: 8),
+                child: Text("${widget.msg}",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+              SizedBox(height: 30,),
               Text(
                 "Enter OTP",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

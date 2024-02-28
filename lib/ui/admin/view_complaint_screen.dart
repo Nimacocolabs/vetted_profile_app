@@ -102,80 +102,93 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
         leading: BackButton(color: Colors.white),
         title: const Text("complaint Details", style: TextStyle(color: Colors.white)),
       ),
-      body: SafeArea(
+      body:SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                if (widget.details.image != null)
-                  Container(
-                    height: 300,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage('${widget.details.image}'),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (verdictData
-                        .isNotEmpty)
-                      Align(
-                        alignment: AlignmentDirectional.bottomEnd,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _showVerdictDataAlert(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: primaryColor,
+          child: FutureBuilder<void>(
+            future: _fetchJuryDetailsFuture,
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // While data is being fetched, show a loading indicator.
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      if (widget.details.image != null)
+                        Container(
+                          height: 300,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('${widget.details.image}'),
+                              fit: BoxFit.fitHeight,
                             ),
-                            child: Text("Verdicts")),
+                          ),
+                        ),
+                      SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (verdictData
+                              .isNotEmpty)
+                            Align(
+                              alignment: AlignmentDirectional.bottomEnd,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    _showVerdictDataAlert(context);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    primary: primaryColor,
+                                  ),
+                                  child: Text("Verdicts")),
+                            ),
+                          SizedBox(width: 10,),
+                        ],
                       ),
-                    SizedBox(width: 10,),
-                  ],
-                ),
-                Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.05,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: primaryColor,
-                    indicatorColor:primaryColor,
-                    tabs: _tabs,
+                      Container(
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height * 0.05,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width,
+                        child: TabBar(
+                          controller: _tabController,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: primaryColor,
+                          indicatorColor:primaryColor,
+                          tabs: _tabs,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          width: MediaQuery
+                              .of(context)
+                              .size
+                              .width - 2,
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: <Widget>[
+                              _buildJobDetailsTab(),
+                              _buildPersonalDetailsTab(),
+                              _buildComplaintDetailsTab(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width - 2,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: <Widget>[
-                        _buildJobDetailsTab(),
-                        _buildPersonalDetailsTab(),
-                        _buildComplaintDetailsTab(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                );
+              }
+            },
           ),
         ),
       ),

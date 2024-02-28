@@ -6,11 +6,12 @@ class LoginSignupResponse {
   bool? otpRequired;
   int? userId;
   int? deviceId;
+  String? displayMessage;
   String? token;
   Errors? errors;
 
   LoginSignupResponse(
-      {this.success, this.status, this.message, this.user,this.token,this.errors,this.userId,this.otpRequired,this.deviceId});
+      {this.success, this.status, this.message, this.user,this.token,this.errors,this.userId,this.otpRequired,this.deviceId,this.displayMessage});
 
   LoginSignupResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -21,6 +22,7 @@ class LoginSignupResponse {
     otpRequired = json['otp_required'];
     userId = json['user_id'];
     deviceId = json['device_id'];
+    displayMessage = json['display_message'];
     errors = json['errors'] != null ? new Errors.fromJson(json['errors']) : null;
   }
 
@@ -39,6 +41,7 @@ class LoginSignupResponse {
     data['otp_required'] = this.otpRequired;
     data['user_id'] = this.userId;
     data['device_id'] = this.deviceId;
+    data['display_message'] = this.displayMessage;
     return data;
   }
 }

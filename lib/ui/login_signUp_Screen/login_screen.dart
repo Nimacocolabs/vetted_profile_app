@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
@@ -383,7 +382,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await SharedPrefs.logIn(loginResponse);
           if (loginResponse.otpRequired == true) {
             toastMessage(loginResponse.message ?? '');
-            Get.to(() => OtpScreen(deviceId:loginResponse.deviceId.toString(),userId:loginResponse.userId.toString()));
+            Get.to(() => OtpScreen(msg:loginResponse.displayMessage.toString(),deviceId:loginResponse.deviceId.toString(),userId:loginResponse.userId.toString()));
           }
           else if (loginResponse.otpRequired == false && loginResponse.user!.role == "admin") {
             Get.offAll(() => AdminHomeScreen());

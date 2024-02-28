@@ -17,14 +17,13 @@ class ViewAllComplaintScreen extends StatefulWidget {
 }
 
 class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with TickerProviderStateMixin {
-  TabController? _tabController;
-  late AnimationController _controller;
+  late TabController _tabController;
   List<Jurours> jurorsData = [];
   List<Verdicts> verdictData = [];
   late Future<void> _fetchJuryDetailsFuture;
   Verdict? verdict;
-  String? judgement;
   bool showPersonalDetailsTab = false;
+
   Future<void> _fetchJuryDetails() async {
     try {
       final response = await http.get(
@@ -37,8 +36,7 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
       );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        final jurorsJson =
-        jsonResponse['profile']['jurours']; // Remove type declaration here
+        final jurorsJson = jsonResponse['profile']['jurours'];
         setState(() {
           jurorsData = jurorsJson != null
               ? jurorsJson.map<Jurours>((e) => Jurours.fromJson(e)).toList()
@@ -46,22 +44,15 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
         });
         final verdictJson = jsonResponse['profile']['verdict'];
         final verdictsJson = jsonResponse['profile']['verdicts'];
-        print("ggu${verdictJson}");
-        // if (verdictJson != null) {
         setState(() {
-          // Check if verdictJson is not null before assigning it to verdict
           verdict = verdictJson != null ? Verdict.fromJson(verdictJson) : null;
           verdictData = verdictsJson != null
               ? verdictsJson.map<Verdicts>((e) => Verdicts.fromJson(e)).toList()
               : [];
-          print("hbshxb${verdict}");
-          print("bhbhj${verdictData}");
           final collegeUserId = jsonResponse['profile']['college']['user_id'];
-          if (collegeUserId == UserDetails.userId) {
-            setState(() {
-              showPersonalDetailsTab = true;
-            });
-          }
+          setState(() {
+            showPersonalDetailsTab = collegeUserId.toString() == UserDetails.userId;
+          });
         });
       } else {
         print('Failed to fetch jury details: ${response.statusCode}');
@@ -70,27 +61,12 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
       print('Error fetching jury details: $error');
     }
   }
-  List<Widget> _buildTabs() {
-    List<Widget> _tabs = [
-      Tab(
-        icon: Text("Job Details"),
-      ),
-      Tab(
-        icon: Text("Complaint Details"),
-      ),
-    ];
-    if (showPersonalDetailsTab) {
-      _tabs.insert(1, Tab(icon: Text("Personal Details")));
-    }
-    return _tabs;
-  }
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
-    _tabController = TabController(length: showPersonalDetailsTab ? 3 : 2, vsync: this);
-    _fetchJuryDetailsFuture = _fetchJuryDetails();// 4 is the number of tabs
+    _tabController = TabController(length: 2, vsync: this);
+    _fetchJuryDetailsFuture = _fetchJuryDetails();
   }
 
   @override
@@ -112,92 +88,101 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
         title: const Text("complaint Details", style: TextStyle(color: Colors.white)),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                if (widget.details.image != null)
-                  Container(
-                    height: 300,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage('${widget.details.image}'),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                  ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (verdictData
-                        .isNotEmpty)
-                      Align(
-                        alignment: AlignmentDirectional.bottomEnd,
-                        child: ElevatedButton(
-                            onPressed: () {
-                              _showVerdictDataAlert(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              primary: primaryColor,
+        child: FutureBuilder<void>(
+          future: _fetchJuryDetailsFuture,
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      if (widget.details.image != null)
+                        Container(
+                          height: 300,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage('${widget.details.image}'),
+                              fit: BoxFit.fitHeight,
                             ),
-                            child: Text("Verdicts")),
+                          ),
+                        ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (verdictData.isNotEmpty)
+                            Align(
+                              alignment: AlignmentDirectional.bottomEnd,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  _showVerdictDataAlert(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue, // Example color, replace with yours
+                                ),
+                                child: Text("Verdicts"),
+                              ),
+                            ),
+                          SizedBox(width: 10),
+                        ],
                       ),
-                    SizedBox(width: 10,),
-                  ],
-                ),
-                Container(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.05,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    labelColor: primaryColor,
-                    indicatorColor:primaryColor,
-                    tabs: _buildTabs(),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        width: MediaQuery.of(context).size.width,
+                        child: TabBar(
+                          controller: _tabController,
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelColor: primaryColor,
+                          indicatorColor:primaryColor,
+                          tabs: _buildTabs(),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.7,
+                          width: MediaQuery.of(context).size.width - 2,
+                          child: TabBarView(
+                            controller: _tabController,
+                            children: _buildTabViews(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: MediaQuery
-                        .of(context)
-                        .size
-                        .width - 2,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: _buildTabViews(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+              );
+            }
+          },
         ),
       ),
     );
   }
 
+  List<Widget> _buildTabs() {
+    return [
+      Tab(
+        icon: Text("Job Details"),
+      ),
+      Tab(
+        icon: Text("Complaint Details"),
+      ),
+    ];
+  }
 
   List<Widget> _buildTabViews() {
-    List<Widget> tabViews = [
+    return [
       _buildJobDetailsTab(),
       _buildComplaintDetailsTab(),
     ];
-    if (showPersonalDetailsTab) {
-      tabViews.insert(1, _buildPersonalDetailsTab());
-    }
-    return tabViews;
   }
+
   Widget _buildJobDetailsTab() {
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -210,24 +195,18 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
           DetailsTile("Phone", widget.details.collegePhone),
           DetailsTile("Email", widget.details.collegeEmail),
           DetailsTile("Address", widget.details.collegeAddress),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPersonalDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Personal Details"),
-          DetailsTile("Name", widget.details.name),
-          DetailsTile("Email", widget.details.email),
-          DetailsTile("Address", widget.details.address),
-          DetailsTile("Phone", widget.details.phone),
-          DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
-          DetailsTile("PAN", widget.details.pan ?? "N/A"),
+          if (showPersonalDetailsTab)
+            Column(
+              children: [
+                SectionTitle("Personal Details"),
+                DetailsTile("Name", widget.details.name),
+                DetailsTile("Email", widget.details.email),
+                DetailsTile("Address", widget.details.address),
+                DetailsTile("Phone", widget.details.phone),
+                DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
+                DetailsTile("PAN", widget.details.pan ?? "N/A"),
+              ],
+            ),
         ],
       ),
     );
@@ -243,7 +222,7 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
           DetailsTile("Nature of Complaint", widget.details.complaint),
           DetailsTile("Details", widget.details.remarks),
           DetailsTile("Intensity ", widget.details.level),
-          if(widget.details.claim != null)
+          if (widget.details.claim != null)
             DetailsTile("Claim", widget.details.claim ?? ""),
         ],
       ),
@@ -265,19 +244,18 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          Text(label, style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
-          SizedBox(width: 10,),
-          Text(":",style: TextStyle(fontWeight: FontWeight.bold)),
-          SizedBox(width: 10,),
-          Flexible( // Wrap the Text widget with Flexible
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          SizedBox(width: 10),
+          Text(":", style: TextStyle(fontWeight: FontWeight.bold)),
+          SizedBox(width: 10),
+          Flexible(
             child: Text(
               value ?? 'N/A',
-              style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
-              overflow: TextOverflow.visible, // Allow overflow
+              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
-
       ),
     );
   }
@@ -343,13 +321,13 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
                           child: Text(
                             verdict.verdict ?? "N/A",
                             style: TextStyle(fontSize: 14),
-                            maxLines: 3, // Set maximum number of lines
-                            overflow: TextOverflow.ellipsis, // Handle overflow
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-                    Divider(), // Add a divider between each verdict
+                    Divider(),
                     SizedBox(height: 12),
                   ],
                 );
@@ -371,5 +349,4 @@ class _ViewAllComplaintScreenState extends State<ViewAllComplaintScreen> with Ti
       },
     );
   }
-
 }
