@@ -89,6 +89,14 @@ class FormatAndValidate {
     ];
   }
 
+  formatOTP() {
+    return [
+      LengthLimitingTextInputFormatter(6), // Assuming OTP length is 6 digits
+      FilteringTextInputFormatter.allow(_numericRegExp),
+    ];
+  }
+
+
   validateNumber(value) {
     return value!.isEmpty || value.length > 8 ||
         value.length < 4
@@ -221,6 +229,13 @@ class FormatAndValidate {
         ? "Transaction ID must be between 10 and 30 characters"
         : null;
   }
+
+  validateOTP(value) {
+    return value.isEmpty || value.length != 6 || !_numericRegExp.hasMatch(value)
+        ? "Enter a valid 6-digit OTP"
+        : null;
+  }
+
 
 
 }

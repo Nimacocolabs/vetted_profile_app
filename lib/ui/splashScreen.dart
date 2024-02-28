@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
@@ -7,6 +9,7 @@ import 'package:faculty_app/ui/login_signUp_Screen/login_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/shared_prefs.dart';
 import 'package:faculty_app/utils/user.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -24,6 +27,8 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
+
+
   void initState() {
     super.initState();
 
@@ -81,24 +86,6 @@ class _SplashScreenState extends State<SplashScreen> {
                         "assets/images/logo2-full-white.png",
                         height: 150,
                       ),
-                      // Text(
-                      //   "Faculty Check",
-                      //   style: TextStyle(
-                      //     fontSize: 30,
-                      //     fontWeight: FontWeight.bold,
-                      //     color: Colors.white,
-                      //     fontFamily: 'Inter',
-                      //   ),
-                      // ),
-                      // Text(
-                      //   "credential system",
-                      //   style: TextStyle(
-                      //     fontSize: 30,
-                      //     fontWeight: FontWeight.bold,
-                      //     color: Colors.white,
-                      //     fontFamily: 'Inter',
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

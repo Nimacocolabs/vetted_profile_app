@@ -3,11 +3,14 @@ class LoginSignupResponse {
   int? status;
   String? message;
   User? user;
+  bool? otpRequired;
+  int? userId;
+  int? deviceId;
   String? token;
   Errors? errors;
 
   LoginSignupResponse(
-      {this.success, this.status, this.message, this.user,this.token,this.errors});
+      {this.success, this.status, this.message, this.user,this.token,this.errors,this.userId,this.otpRequired,this.deviceId});
 
   LoginSignupResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
@@ -15,6 +18,9 @@ class LoginSignupResponse {
     message = json['message'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
     token = json['token'];
+    otpRequired = json['otp_required'];
+    userId = json['user_id'];
+    deviceId = json['device_id'];
     errors = json['errors'] != null ? new Errors.fromJson(json['errors']) : null;
   }
 
@@ -30,6 +36,9 @@ class LoginSignupResponse {
     if (this.errors != null) {
       data['errors'] = this.errors!.toJson();
     }
+    data['otp_required'] = this.otpRequired;
+    data['user_id'] = this.userId;
+    data['device_id'] = this.deviceId;
     return data;
   }
 }

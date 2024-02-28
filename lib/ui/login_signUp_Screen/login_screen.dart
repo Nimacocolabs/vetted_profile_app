@@ -1,18 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:faculty_app/blocs/auth_bloc.dart';
 import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
 import 'package:faculty_app/ui/committe/committe_home_screen.dart';
 import 'package:faculty_app/ui/login_signUp_Screen/forgot_password_screen.dart';
+import 'package:faculty_app/ui/login_signUp_Screen/otp_screen.dart';
 import 'package:faculty_app/ui/login_signUp_Screen/signup_screen.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/shared_prefs.dart';
 import 'package:faculty_app/utils/string_formatter_and_validator.dart';
 import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -28,22 +31,46 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  AuthBloc _authBloc = AuthBloc();
+
 
   FormatAndValidate formatAndValidate = FormatAndValidate();
   var _lkey = new GlobalKey<FormState>();
   TextFieldControl _email = TextFieldControl();
   TextFieldControl _password = TextFieldControl();
-  final String _youtubeUrl = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID';
+  String? _deviceId;
+  //Get Device Information
+  void _getDeviceId() async {
+    final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String? deviceId;
 
-  Future<void> _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
+    if (kIsWeb) {
+      final webBrowserInfo = await deviceInfo.webBrowserInfo;
+      deviceId =
+      '${webBrowserInfo.vendor ?? '-'} + ${webBrowserInfo.userAgent ?? '-'} + ${webBrowserInfo.hardwareConcurrency.toString()}';
+    } else if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      deviceId = androidInfo.id;
+    } else if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      deviceId = iosInfo.identifierForVendor;
+    } else if (Platform.isLinux) {
+      final linuxInfo = await deviceInfo.linuxInfo;
+      deviceId = linuxInfo.machineId;
+    } else if (Platform.isWindows) {
+      final windowsInfo = await deviceInfo.windowsInfo;
+      deviceId = windowsInfo.deviceId;
+    } else if (Platform.isMacOS) {
+      final macOsInfo = await deviceInfo.macOsInfo;
+      deviceId = macOsInfo.systemGUID;
     }
+    setState(() {
+      _deviceId = deviceId;
+    });
   }
-
+  void initState() {
+    super.initState();
+    _getDeviceId();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -341,7 +368,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Map<String, dynamic> body = {};
     body["email"] = email;
     body["password"] = password;
-
+    body["device_id"] = _deviceId;
     try {
       final response = await http.post(
         Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/login'),
@@ -354,13 +381,20 @@ class _LoginScreenState extends State<LoginScreen> {
         LoginSignupResponse loginResponse = LoginSignupResponse.fromJson(jsonResponse);
         if (loginResponse.success!) {
           await SharedPrefs.logIn(loginResponse);
-          if (loginResponse.user!.role == "admin") {
-            Get.offAll(() => AdminHomeScreen());
-          } else if (loginResponse.user!.role == "college") {
-            Get.offAll(() => CollegeHomeScreen());
-          } else {
-            Get.offAll(() => CommitteHomeScreen());
+          if (loginResponse.otpRequired == true) {
+            toastMessage(loginResponse.message ?? '');
+            Get.to(() => OtpScreen(deviceId:loginResponse.deviceId.toString(),userId:loginResponse.userId.toString()));
           }
+          else if (loginResponse.otpRequired == false && loginResponse.user!.role == "admin") {
+            Get.offAll(() => AdminHomeScreen());
+          } else if (loginResponse.otpRequired == false && loginResponse.user!.role == "college") {
+            Get.offAll(() => CollegeHomeScreen());
+          } else if (loginResponse.otpRequired == false && loginResponse.user!.role == "committee")  {
+            Get.offAll(() => CommitteHomeScreen());
+          } else
+            {
+              toastMessage('You are not authorized!');
+            }
         } else {
           if (response.statusCode == 200) {
             toastMessage('You are not authorized!');

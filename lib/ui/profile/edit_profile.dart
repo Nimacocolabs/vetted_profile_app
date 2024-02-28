@@ -259,6 +259,15 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _updateFunction() async {
+    if (image != null) {
+
+      int maxSizeInBytes = 200 * 1024; // 200 KB
+      int imageSizeInBytes = await image!.length();
+      if (imageSizeInBytes > maxSizeInBytes) {
+        Fluttertoast.showToast(msg: "Image size must not exceed 200 kilobytes");
+        return;
+      }
+    }
     AppDialogs.loading();
     var formData = FormData();
     if (image != null) {

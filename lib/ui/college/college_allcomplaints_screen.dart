@@ -1,9 +1,13 @@
+import 'dart:ui';
+
+import 'package:blur/blur.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:faculty_app/blocs/college/college_othercomplaint_bloc.dart';
 import 'package:faculty_app/interface/load_more_listener.dart';
 import 'package:faculty_app/models/admin/complaints_list_reponse.dart';
 import 'package:faculty_app/network/apis_response.dart';
 import 'package:faculty_app/ui/admin/view_complaint_screen.dart';
+import 'package:faculty_app/ui/college/view_all_complaints_screnn.dart';
 import 'package:faculty_app/utils/api_helper.dart';
 import 'package:faculty_app/utils/custom_loader/linear_loader.dart';
 import 'package:faculty_app/widgets/common_api_loader.dart';
@@ -23,6 +27,8 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
   late ScrollController _itemsScrollController;
   bool isLoadingMore = false;
   List<Profiles> filteredComplaintsList = [];
+  String? searchQuery;
+
   @override
   void initState() {
     _bloc = CollegeOtherComplaintBloc(listener: this);
@@ -60,8 +66,10 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
       print("reach the top");
     }
   }
+
   void filterComplaintList(String query) {
     setState(() {
+      searchQuery = query;
       filteredComplaintsList = _bloc.complaintList
           .where((complaint) =>
       complaint.name!.toLowerCase().contains(query.toLowerCase()) ||
@@ -71,7 +79,9 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
           .toList();
     });
   }
+
   TextEditingController searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +106,6 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
         onRefresh: () {
           return _bloc.getComplaintsList(false);
         },
-
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           controller: _itemsScrollController,
@@ -181,7 +190,7 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
               tileColor: Colors.grey[200],
               contentPadding: EdgeInsets.all(10),
               onTap: () {
-                Get.to(ViewComplaintScreen(details:complaintsList[index]));
+                Get.to(ViewAllComplaintScreen(details:complaintsList[index]));
               },
               leading: Container(
                 height: 60,
@@ -217,31 +226,17 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
                 children: [
                   SizedBox(height: 7,),
                   Text(
-                    "${complaintsList[index].name}",
+                    "${complaintsList[index].name!}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
-                      color: Colors.black,
+                      color: primaryColor,
                     ),
                   ),
-                  SizedBox(height: 4,),
-                  Text(
-                    "${complaintsList[index].email}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 4,),
-                  Text(
-                    "${complaintsList[index].phone}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: Colors.black,
-                    ),
-                  ),
+                  SizedBox(height: 4),
+                  _buildBlurText(complaintsList[index].email!, searchQuery ?? "", complaintsList[index].email!),
+                  SizedBox(height: 4),
+                  _buildBlurText(complaintsList[index].phone!, searchQuery ?? "", complaintsList[index].phone!),
                   Text(
                     "Status : ${complaintsList[index].status!.toUpperCase()}",
                     style: TextStyle(
@@ -259,4 +254,31 @@ class _CollegeAllComplaintsScreenState extends State<CollegeAllComplaintsScreen>
     );
 
   }
+
+  Widget _buildBlurText(String text, String searchQuery, String fieldText) {
+    if (searchQuery.isNotEmpty && fieldText.toLowerCase().contains(searchQuery.toLowerCase())) {
+      return Text(
+        text,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          color: Colors.black,
+        ),
+      );
+    } else {
+      return Blur(
+        blur: 2,
+        blurColor: Theme.of(context).splashColor,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+            color: Colors.black.withOpacity(0.3),
+          ),
+        ),
+      );
+    }
+  }
+
 }
