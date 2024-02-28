@@ -380,6 +380,8 @@ class _LoginScreenState extends State<LoginScreen> {
         LoginSignupResponse loginResponse = LoginSignupResponse.fromJson(jsonResponse);
         if (loginResponse.success!) {
           await SharedPrefs.logIn(loginResponse);
+          _email.controller.clear();
+          _password.controller.clear();
           if (loginResponse.otpRequired == true) {
             toastMessage(loginResponse.message ?? '');
             Get.to(() => OtpScreen(msg:loginResponse.displayMessage.toString(),deviceId:loginResponse.deviceId.toString(),userId:loginResponse.userId.toString()));
