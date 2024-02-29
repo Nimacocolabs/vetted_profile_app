@@ -53,7 +53,7 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
               AppTextBox(
                 textFieldControl: _email,
-                prefixIcon: Icon(Icons.email_outlined),
+                prefixIcon: Icon(Icons.email_outlined,color: primaryColor,),
                 hintText: 'Email',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,

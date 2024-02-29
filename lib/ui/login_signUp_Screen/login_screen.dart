@@ -191,6 +191,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: TextButton(
                             onPressed: () {
                               Get.to(ForgotPasswordScreen());
+                              _email.controller.clear();
+                              _password.controller.clear();
                             },
                             child: Text(
                               'Forgot Password ?',
@@ -244,6 +246,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 onPressed: () {
                                   Get.to(SignUpScreen());
+                                  _email.controller.clear();
+                                  _password.controller.clear();
                                 }),
                           ],
                         ),
