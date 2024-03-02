@@ -9,6 +9,8 @@ import 'package:faculty_app/widgets/app_dialogs.dart';
 import 'package:faculty_app/widgets/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+
 
 
 class SignUpScreen extends StatefulWidget {
@@ -63,12 +65,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     'Uttar Pradesh',
     'Uttarakhand',
     'West Bengal',
-    'Andaman and Nicobar Islands',
     'Chandigarh',
-    'Dadra and Nagar Haveli and Daman and Diu',
-    'Lakshadweep',
-    'Delhi',
-    'Puducherry',
   ];
 
   @override
@@ -302,24 +299,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
     body["college_phone"] = college_phone;
     body["address"] = college_address;
     body["city"] = college_city;
-    body["state"] = selectedState;
-    try {
-      RegisterResponse response =
-      await _authBloc!.userRegistration(json.encode(body));
+    body["state"] = selectedState;try {
+      final response = await http.post(
+        Uri.parse('https://facultycheck.com/backend/api/register-college'),
+        body: body,
+      );
+
       Get.back();
-      if (response.success!) {
-        // Get.to(LoginScreen());
-        toastMessage('College registered successfully!');
-        Get.to(PaymentScreen(imageUrl:"${response.qrCode}",id:response.collegeId.toString()));
-        // showAlert(context,"${response.message}");
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(response.body);
+        RegisterResponse registerResponse = RegisterResponse.fromJson(jsonResponse);
+        if (registerResponse.success!) {
+              toastMessage('College registered successfully!');
+              Get.to(PaymentScreen(imageUrl:"${registerResponse.qrCode}",id:registerResponse.collegeId.toString()));
+        }
+      } else if (response.statusCode == 422) {
+        final jsonResponse = json.decode(response.body);
+        if (jsonResponse.containsKey('errors')) {
+          final errors = jsonResponse['errors'];
+          if (errors.containsKey('email')) {
+            toastMessage(errors['email'][0]);
+          }
+          if (errors.containsKey('code')) {
+            toastMessage(errors['code'][0]);
+          }
+          if (errors.containsKey('phone')) {
+            toastMessage(errors['phone'][0]);
+          }
+        } else {
+          toastMessage('Validation errors: ${jsonResponse['message']}');
+        }
       } else {
-        toastMessage('${response.message!}');
+        toastMessage('${json.decode(response.body)['message']}');
       }
-    } catch (e, s) {
-      Completer().completeError(e, s);
+    } catch (error) {
       Get.back();
-      toastMessage('Email already taken!');
+      toastMessage('Failed to signup: $error');
     }
+
+    // try {
+    //   RegisterResponse response =
+    //   await _authBloc!.userRegistration(json.encode(body));
+    //   Get.back();
+    //   if (response.success!) {
+    //     toastMessage('College registered successfully!');
+    //     Get.to(PaymentScreen(imageUrl:"${response.qrCode}",id:response.collegeId.toString()));
+    //   } else {
+    //     toastMessage('${response.message!}');
+    //   }
+    // } catch (e, s) {
+    //   Completer().completeError(e, s);
+    //   Get.back();
+    //   toastMessage('Email already taken!');
+    // }
   }
 
   void showAlert(BuildContext context, String message) {

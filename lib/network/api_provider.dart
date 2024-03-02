@@ -8,7 +8,8 @@ class ApiProvider {
 
   //todo change to live base url
 
-  static String baseUrl = 'https://cocoalabs.in/VettedProfilesHub/public/';
+  // static String baseUrl = 'https://cocoalabs.in/VettedProfilesHub/public/';
+  static String baseUrl = 'https://facultycheck.com/backend/';
 
   //static String baseUrl = 'https://9a6a-117-201-131-18.ngrok.io/';
 

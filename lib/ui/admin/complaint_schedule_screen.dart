@@ -48,7 +48,7 @@ class _ComplaintScheduleScreenState extends State<ComplaintScheduleScreen> {
   };
   void _fetchJuryMembers() async {
 
-    final response = await http.get(Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/admin/committee/list'),
+    final response = await http.get(Uri.parse('https://facultycheck.com/backend/api/admin/committee/list'),
         headers: headers
     );
 

@@ -28,7 +28,7 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
     try {
       final response = await http.get(
         Uri.parse(
-            'https://cocoalabs.in/VettedProfilesHub/public/api/profiles/${widget.details.id}/show'),
+            'https://facultycheck.com/backend/api/profiles/${widget.details.id}/show'),
         headers: {
           'Authorization': 'Bearer ${UserDetails.apiToken}',
           'Accept': 'application/json',
@@ -169,7 +169,7 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
+                          height: MediaQuery.of(context).size.height * 0.7,
                           width: MediaQuery
                               .of(context)
                               .size
@@ -196,53 +196,59 @@ class _ViewComplaintScreenState extends State<ViewComplaintScreen> with TickerPr
   }
 
   Widget _buildJobDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DetailsTile("Job Title", widget.details.subject),
-          DetailsTile("Department", widget.details.department),
-          DetailsTile("Name", widget.details.collegeName),
-          DetailsTile("Phone", widget.details.collegePhone),
-          DetailsTile("Email", widget.details.collegeEmail),
-          DetailsTile("Address", widget.details.collegeAddress),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DetailsTile("Job Title", widget.details.subject),
+            DetailsTile("Department", widget.details.department),
+            DetailsTile("Name", widget.details.collegeName),
+            DetailsTile("Phone", widget.details.collegePhone),
+            DetailsTile("Email", widget.details.collegeEmail),
+            DetailsTile("Address", widget.details.collegeAddress),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPersonalDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Personal Details"),
-          DetailsTile("Name", widget.details.name),
-          DetailsTile("Email", widget.details.email),
-          DetailsTile("Address", widget.details.address),
-          DetailsTile("Phone", widget.details.phone),
-          DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
-          DetailsTile("PAN", widget.details.pan ?? "N/A"),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle("Personal Details"),
+            DetailsTile("Name", widget.details.name),
+            DetailsTile("Email", widget.details.email),
+            DetailsTile("Address", widget.details.address),
+            DetailsTile("Phone", widget.details.phone),
+            DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
+            DetailsTile("PAN", widget.details.pan ?? "N/A"),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildComplaintDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Complaint Details"),
-          DetailsTile("Nature of Complaint", widget.details.complaint),
-          DetailsTile("Details", widget.details.remarks),
-          DetailsTile("Intensity ", widget.details.level),
-          if(widget.details.claim != null)
-          DetailsTile("Claim", widget.details.claim ?? ""),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle("Complaint Details"),
+            DetailsTile("Nature of Complaint", widget.details.complaint),
+            DetailsTile("Details", widget.details.remarks),
+            DetailsTile("Intensity ", widget.details.level),
+            if(widget.details.claim != null)
+            DetailsTile("Claim", widget.details.claim ?? ""),
+          ],
+        ),
       ),
     );
   }

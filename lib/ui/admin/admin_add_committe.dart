@@ -57,12 +57,7 @@ class _AddCommitteScreenState extends State<AddCommitteScreen> {
     'Uttar Pradesh',
     'Uttarakhand',
     'West Bengal',
-    'Andaman and Nicobar Islands',
     'Chandigarh',
-    'Dadra and Nagar Haveli and Daman and Diu',
-    'Lakshadweep',
-    'Delhi',
-    'Puducherry',
   ];
   TextFieldControl _name = TextFieldControl();
   TextFieldControl _email = TextFieldControl();

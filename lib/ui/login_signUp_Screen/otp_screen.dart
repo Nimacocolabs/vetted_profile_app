@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:faculty_app/models/common_response.dart';
 import 'package:faculty_app/models/signup_login_response.dart';
 import 'package:faculty_app/ui/admin/admin_home_screen.dart';
 import 'package:faculty_app/ui/college/college_home_screen.dart';
@@ -130,7 +128,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/users/${widget.userId}/device/${widget.deviceId}/verify-otp'),
+        Uri.parse('https://facultycheck.com/backend/api/users/${widget.userId}/device/${widget.deviceId}/verify-otp'),
         body: body,
       );
       print("Response${response}");
@@ -178,11 +176,10 @@ class _OtpScreenState extends State<OtpScreen> {
     AppDialogs.loading();
     try {
       final response = await http.get(
-        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/users/${widget.userId}/device/${widget.deviceId}/resend-otp'),
+        Uri.parse('https://facultycheck.com/backend/api/users/${widget.userId}/device/${widget.deviceId}/resend-otp'),
       );
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
-        print("ghg${jsonResponse}");
         toastMessage('OTP resent successfully');
       } else {
         toastMessage( '${json.decode(response.body)['message']}');
@@ -190,7 +187,6 @@ class _OtpScreenState extends State<OtpScreen> {
     } catch (error) {
       toastMessage('Failed to resend OTP: $error');
     } finally {
-      // Close loading dialog
       Navigator.of(context).pop();
     }
   }

@@ -39,7 +39,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
     try {
       final response = await http.get(
         Uri.parse(
-            'https://cocoalabs.in/VettedProfilesHub/public/api/profiles/${widget.details.id}/show'),
+            'https://facultycheck.com/backend/api/profiles/${widget.details.id}/show'),
         headers: {
           'Authorization': 'Bearer ${UserDetails.apiToken}',
           'Accept': 'application/json',
@@ -256,69 +256,75 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen>
   }
 
   Widget _buildJobDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Job Details"),
-          DetailsTile("Job Title", widget.details.subject),
-          DetailsTile("Department", widget.details.department),
-          DetailsTile("Name", widget.details.collegeName),
-          DetailsTile("Phone", widget.details.collegePhone),
-          DetailsTile("Email", widget.details.collegeEmail),
-          DetailsTile("Address", widget.details.collegeAddress),
-          SectionTitle("Personal Details"),
-          DetailsTile("Name", widget.details.name),
-          DetailsTile("Email", widget.details.email),
-          DetailsTile("Address", widget.details.address),
-          DetailsTile("Phone", widget.details.phone),
-          DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
-          DetailsTile("PAN", widget.details.pan ?? "N/A"),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle("Job Details"),
+            DetailsTile("Job Title", widget.details.subject),
+            DetailsTile("Department", widget.details.department),
+            DetailsTile("Name", widget.details.collegeName),
+            DetailsTile("Phone", widget.details.collegePhone),
+            DetailsTile("Email", widget.details.collegeEmail),
+            DetailsTile("Address", widget.details.collegeAddress),
+            // SectionTitle("Personal Details"),
+            // DetailsTile("Name", widget.details.name),
+            // DetailsTile("Email", widget.details.email),
+            // DetailsTile("Address", widget.details.address),
+            // DetailsTile("Phone", widget.details.phone),
+            // DetailsTile("Aadhar", widget.details.aadhar ?? "N/A"),
+            // DetailsTile("PAN", widget.details.pan ?? "N/A"),
+          ],
+        ),
       ),
     );
   }
 
 
   Widget _buildComplaintDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Complaint Details"),
-          DetailsTile("Nature of Complaint", widget.details.complaint),
-          DetailsTile("Details", widget.details.remarks),
-          DetailsTile("Intensity ", widget.details.level),
-          if(widget.details.claim != null)
-            DetailsTile("Claim", widget.details.claim ?? ""),
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle("Complaint Details"),
+            DetailsTile("Nature of Complaint", widget.details.complaint),
+            DetailsTile("Details", widget.details.remarks),
+            DetailsTile("Intensity ", widget.details.level),
+            if(widget.details.claim != null)
+              DetailsTile("Claim", widget.details.claim ?? ""),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHearingsDetailsTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle("Hearings Details"),
-          DetailsTile("Schedule Date", _formatDate(widget.details.scheduledDate)),
-          DetailsTile("Schedule Time", widget.details.scheduledTime),
-          DetailsTile("Schedule", widget.details.hearingStatus ?? ""),
-          DetailsTile("Google meet", ""),
-          TextButton(
-              onPressed: () async {
-                Uri url = Uri.parse(widget.details.meetingLink!);
-                await _launchInBrowser(url);
-              },
-              child: Text(
-                "${widget.details.meetingLink}",
-                style: TextStyle(color: primaryColor),
-              ))
-        ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SectionTitle("Hearings Details"),
+            DetailsTile("Schedule Date", _formatDate(widget.details.scheduledDate)),
+            DetailsTile("Schedule Time", widget.details.scheduledTime),
+            DetailsTile("Schedule", widget.details.hearingStatus ?? ""),
+            DetailsTile("Google meet", ""),
+            TextButton(
+                onPressed: () async {
+                  Uri url = Uri.parse(widget.details.meetingLink!);
+                  await _launchInBrowser(url);
+                },
+                child: Text(
+                  "${widget.details.meetingLink}",
+                  style: TextStyle(color: primaryColor),
+                ))
+          ],
+        ),
       ),
     );
   }

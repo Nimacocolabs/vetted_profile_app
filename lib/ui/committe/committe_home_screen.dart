@@ -32,7 +32,7 @@ class _CommitteHomeScreenState extends State<CommitteHomeScreen> {
   Future<void> _fetchDashboardDetails() async {
     try {
       final response = await http.get(
-        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/dashboard-details'),
+        Uri.parse('https://facultycheck.com/backend/api/dashboard-details'),
         headers: {
           'Authorization': 'Bearer ${UserDetails.apiToken}',
           'Accept': 'application/json',

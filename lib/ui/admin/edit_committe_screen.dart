@@ -66,15 +66,8 @@ class _EditCommitteScreenState extends State<EditCommitteScreen> {
     'Uttar Pradesh',
     'Uttarakhand',
     'West Bengal',
-    'Andaman and Nicobar Islands',
     'Chandigarh',
-    'Dadra and Nagar Haveli and Daman and Diu',
-    'Lakshadweep',
-    'Delhi',
-    'Puducherry',
   ];
-
-
   FormatAndValidate formatAndValidate = FormatAndValidate();
 
   @override

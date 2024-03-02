@@ -374,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen> {
     body["device_id"] = _deviceId;
     try {
       final response = await http.post(
-        Uri.parse('https://cocoalabs.in/VettedProfilesHub/public/api/login'),
+        Uri.parse('https://facultycheck.com/backend/api/login'),
         body: body,
       );
 
