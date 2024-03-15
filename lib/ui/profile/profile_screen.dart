@@ -180,7 +180,7 @@ class _ProfileScreenUserState extends State<ProfileScreenUser>
                           Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) => GestureDetector(
                         onTap: () async {
-                          await _showpicker();
+                          // await _showpicker();
                         },
                         child: CircleAvatar(
                           radius: 46.0,
